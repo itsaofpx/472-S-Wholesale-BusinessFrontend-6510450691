@@ -1,5 +1,5 @@
 import { FaShoppingCart, FaBell, FaUserCircle } from 'react-icons/fa';
-
+import Link from "next/link";
 export default function Navbar() {
   return (
     <nav className="bg-black text-white shadow-md">
@@ -17,7 +17,9 @@ export default function Navbar() {
           
           {/* Shopping Cart */}
           <button className="hover:text-gray-300">
+            <Link href= '/cart'>
             <FaShoppingCart size={24} />
+            </Link>
           </button>
 
           {/* Notifications */}
