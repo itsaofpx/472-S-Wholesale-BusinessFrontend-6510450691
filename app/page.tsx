@@ -30,7 +30,7 @@ export default function Home() {
                 />
               </div>
               <div className="space-y-3">
-                <Link href="">
+                <Link href="/landing">
                   <button
                     id="loginButton"
                     className="bg-silverSand text-white w-full p-3 rounded-full hover:bg-stone-700 hover:text-white"

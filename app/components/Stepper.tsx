@@ -59,6 +59,7 @@ const Stepper: React.FC = () => {
     }
   };
 
+
   return (
     <div>
       {currentStep === 0 && (

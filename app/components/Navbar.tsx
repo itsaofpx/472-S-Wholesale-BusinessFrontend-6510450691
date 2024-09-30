@@ -7,7 +7,7 @@ export default function Navbar() {
         
         {/* Left side: Logo */}
         <div>
-          <a href="/" className="text-2xl font-bold tracking-wide text-white hover:text-gray-300">
+          <a href="/landing" className="text-2xl font-bold tracking-wide text-white hover:text-gray-300">
             LOGO
           </a>
         </div>
