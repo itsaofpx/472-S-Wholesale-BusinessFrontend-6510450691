@@ -1,10 +1,46 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { ChangeEventHandler, useState } from "react";
 
 const Stepper: React.FC = () => {
   const steps: string[] = ["กรอกที่อยู่อีเมลของคุณ", "กรอกข้อมูลพื้นฐานของคุณ"];
+
+  const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>): void =>{
+    setEmailStr(e.target.value)
+  }
+
+  const handleChangePassword = (e: React.ChangeEvent<HTMLInputElement>): void =>{
+    setPasswordStr(e.target.value)
+  }
+
+  const handleChangeConfirm = (e: React.ChangeEvent<HTMLInputElement>): void =>{
+    setConfirmStr(e.target.value)
+  }
+  const handleChangeID = (e: React.ChangeEvent<HTMLInputElement>): void =>{
+    setIDStr(e.target.value)
+  }
+
+  const handleChangeFname = (e: React.ChangeEvent<HTMLInputElement>): void =>{
+    setFnameStr(e.target.value)
+  }
+
+  const handleChangeLname = (e: React.ChangeEvent<HTMLInputElement>): void =>{
+    setLnameStr(e.target.value)
+  }
+
+  const handleChangePhoneNum = (e: React.ChangeEvent<HTMLInputElement>): void =>{
+    setPhoneNumStr(e.target.value)
+  }
+
+  const [emailStr, setEmailStr] = useState<string>("")
+  const [passwordStr, setPasswordStr] = useState<string>("")
+  const [confirmStr, setConfirmStr] = useState<string>("")
+  const [IDStr, setIDStr] = useState<string>("")
+  const [fnameStr, setFnameStr] = useState<string>("")
+  const [lnameStr, setLnameStr] = useState<string>("")
+  const [PhoneNumStr, setPhoneNumStr] = useState<string>("")
+
   const [currentStep, setCurrentStep] = useState<number>(0); // Start with the first step
 
   const handleNext = (): void => {
@@ -49,11 +85,14 @@ const Stepper: React.FC = () => {
           <div className="">
             <p className="text-left text-gray-500">อีเมลของคุณ</p>
             <input
+              value={emailStr}
               type="email"
               id="email"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
               placeholder="กรอกที่อยู่อีเมล"
               required
+
+              onChange={handleChangeEmail}
             />
           </div>
           <div className="space-y-2">
@@ -61,21 +100,27 @@ const Stepper: React.FC = () => {
               <div className="w-full">
                 <p className="text-gray-500 text-left">รหัสผ่าน</p>
                 <input
+                  value={passwordStr}
                   type="password"
                   id="password"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="กรอกรหัสผ่าน"
                   required
+
+                  onChange={handleChangePassword}
                 />
               </div>
               <div className="w-full">
                 <p className="text-gray-500 text-left">ยืนยันรหัสผ่าน</p>
                 <input
+                  value={confirmStr}
                   type="password"
                   id="confirm-password"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="กรอกรหัสผ่าน"
                   required
+
+                  onChange={handleChangeConfirm}
                 />
               </div>
             </div>
@@ -117,11 +162,14 @@ const Stepper: React.FC = () => {
           <div>
             <p className="text-left text-gray-500">เลขบัตรประชาชน</p>
             <input
+              value={IDStr}
               type="text"
               id="idNumber"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="กรอกเลขบัตรประชาชน"
               required
+
+              onChange={handleChangeID}
             />
           </div>
           <div className="space-y-2">
@@ -129,21 +177,27 @@ const Stepper: React.FC = () => {
               <div className="w-full">
                 <p className="text-gray-500 text-left">ชื่อจริง</p>
                 <input
+                  value={fnameStr}
                   type="text"
                   id="firstName"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="กรอกชื่อจริง"
                   required
+
+                  onChange={handleChangeFname}
                 />
               </div>
               <div className="w-full">
                 <p className="text-gray-500 text-left">นามสกุล</p>
                 <input
+                  value={lnameStr}
                   type="text"
                   id="lastName"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="กรอกนามสกุล"
                   required
+
+                  onChange={handleChangeLname}
                 />
               </div>
             </div>
@@ -151,11 +205,15 @@ const Stepper: React.FC = () => {
           <div>
             <p className="text-left text-gray-500">เบอร์โทรศัพท์</p>
             <input
+              value={PhoneNumStr}
               type="text"
               id="phoneNumber"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="กรอกเบอร์โทรศัพท์"
               required
+
+
+              onChange={handleChangePhoneNum}
             />
           </div>
           <div className="flex flex-row space-x-2">
