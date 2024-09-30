@@ -3,6 +3,8 @@
 import Link from "next/link";
 import React, { ChangeEventHandler, useState } from "react";
 
+
+
 const Stepper: React.FC = () => {
   const steps: string[] = ["กรอกที่อยู่อีเมลของคุณ", "กรอกข้อมูลพื้นฐานของคุณ"];
 
