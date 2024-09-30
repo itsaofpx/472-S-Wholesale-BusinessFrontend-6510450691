@@ -1,6 +1,24 @@
+"use client";
+
 import Image from 'next/image'
 import Navbar from '../components/Navbar'
+import { useState } from 'react';
+import { FaPlus, FaMinus } from "react-icons/fa6";
+
 export default function ProductDetail() {
+  const [countQuantity, setCountQuantity] = useState<number>(1);
+
+  const handleIncrement = () => {
+    setCountQuantity(countQuantity + 1);
+  };
+
+  const handleDecrement = () => {
+    if (countQuantity > 1) {
+      setCountQuantity(countQuantity - 1);
+    }
+  };
+
+
   return (
     <div>
       <Navbar />
@@ -60,21 +78,21 @@ export default function ProductDetail() {
               550 บาท
             </div>
 
-            <div className="mt-4 space-x-4">
+            <div className="flex flex-row mt-4 space-x-4">
+              <div className="flex flex-row items-center gap-x-4 
+            text-gray-800 border border-gray-800 
+            font-medium rounded-full text-sm px-5 py-2.5">
+                <div><button onClick={handleDecrement} > <FaMinus /> </button></div>
+                <div className='text-xl'>{countQuantity}</div>
+                <div><button onClick={handleIncrement}><FaPlus /></button></div>
+              </div>
+
               <button type="button" className="
             text-white bg-gray-800 
             hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 
             font-medium rounded-full text-sm px-5 py-2.5 
             transition-all duration-300 ease-in-out transform hover:scale-105">
                 Add to Cart
-              </button>
-
-              <button className="
-            text-gray-800 border border-gray-800 
-            hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 
-            font-medium rounded-full text-sm px-5 py-2.5 
-            transition-all duration-300 ease-in-out transform hover:scale-105">
-                Buy Now
               </button>
             </div>
           </div>
