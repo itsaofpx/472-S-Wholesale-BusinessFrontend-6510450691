@@ -4,182 +4,186 @@ import Link from "next/link";
 import React, { useState } from "react";
 
 const Stepper: React.FC = () => {
-    const steps: string[] = ["กรอกที่อยู่อีเมลของคุณ", "กรอกข้อมูลพื้นฐานของคุณ"];
-    const [currentStep, setCurrentStep] = useState<number>(0); // Start with the first step
+  const steps: string[] = ["กรอกที่อยู่อีเมลของคุณ", "กรอกข้อมูลพื้นฐานของคุณ"];
+  const [currentStep, setCurrentStep] = useState<number>(0); // Start with the first step
 
-    const handleNext = (): void => {
-        // Increment the current step if it is less than the number of steps
-        if (currentStep < steps.length - 1) {
-            setCurrentStep(currentStep + 1);
-        }
-    };
+  const handleNext = (): void => {
+    // Increment the current step if it is less than the number of steps
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
 
-    const handlePrev = (): void => {
-        // Decrement the current step if it is greater than 0
-        if (currentStep > 0) {
-            setCurrentStep(currentStep - 1);
-        }
-    };
+  const handlePrev = (): void => {
+    // Decrement the current step if it is greater than 0
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
 
-    return (
-        <div>
-            {currentStep === 0 && (
-                <div className=" space-y-4 p-5 w-[50rem]">
-                    <div className="flex items-center justify-between">
-                        <div className="relative flex flex-col justify-center items-center w-full">
-                            <div className="flex items-center justify-center w-12 h-12 bg-black text-white rounded-full">
-                                1
-                            </div>
-                            <p className="text-black ">{steps[0]}</p>
-                        </div>
+  return (
+    <div>
+      {currentStep === 0 && (
+        <div className=" space-y-4 p-5 w-[50rem]">
+          <div className="flex items-center justify-between">
+            <div className="relative flex flex-col justify-center items-center w-full">
+              <div className="flex items-center justify-center w-12 h-12 bg-black text-white rounded-full">
+                1
+              </div>
+              <p className="text-black ">{steps[0]}</p>
+            </div>
 
-                        {/* Stepper line */}
-                        <div className="relative flex items-center w-full">
-                            <div className="h-1 w-full bg-black opacity-40" />
-                        </div>
+            {/* Stepper line */}
+            <div className="relative flex items-center w-full">
+              <div className="h-1 w-full bg-black opacity-40" />
+            </div>
 
-                        <div className="relative flex flex-col justify-center items-center w-full opacity-40">
-                            <div className="flex items-center justify-center w-12 h-12 bg-black text-white rounded-full">
-                                2
-                            </div>
-                            <p className="text-black">{steps[1]}</p>
-                        </div>
-                    </div>
+            <div className="relative flex flex-col justify-center items-center w-full opacity-40">
+              <div className="flex items-center justify-center w-12 h-12 bg-black text-white rounded-full">
+                2
+              </div>
+              <p className="text-black">{steps[1]}</p>
+            </div>
+          </div>
 
-
-                    <div className="">
-                        <p className="text-left text-gray-500">อีเมลของคุณ</p>
-                        <input
-                            type="email"
-                            id="email"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                            placeholder="กรอกที่อยู่อีเมล"
-                            required
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <div className="flex flex-row gap-10">
-                            <div className="w-full">
-                                <p className="text-gray-500 text-left">รหัสผ่าน</p>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="กรอกรหัสผ่าน"
-                                    required
-                                />
-                            </div>
-                            <div className="w-full">
-                                <p className="text-gray-500 text-left">ยืนยันรหัสผ่าน</p>
-                                <input
-                                    type="password"
-                                    id="confirm-password"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="กรอกรหัสผ่าน"
-                                    required
-                                />
-                            </div>
-                        </div>
-                        <p className="font-light text-gray-500 text-left">ใช้ 8 ตัวอักษรหรือมากกว่าที่มีการผสมผสานของตัวอักษร ตัวเลข และสัญลักษณ์</p>
-                    </div>
-                    <div>
-                        <button
-                            id="nextButton"
-                            onClick={handleNext}
-                            className="bg-silverSand text-white w-full p-3 rounded-full hover:bg-stone-700 hover:text-white"
-                        >
-                            ถัดไป
-                        </button>
-                    </div>
-                </div>
-            )}
-            {currentStep === 1 && (
-                <div className="space-y-4 p-5 w-[50rem] ">
-                    <div className="flex justify-between">
-                        <div className="relative flex flex-col justify-center items-center w-full opacity-40">
-                            <div className="flex items-center justify-center w-12 h-12 bg-black text-white rounded-full">
-                                1
-                            </div>
-                            <p className="text-black">{steps[0]}</p>
-                        </div>
-                        <div className="relative flex items-center w-full">
-                            <div className="h-1 w-full bg-black" />
-                        </div>
-                        <div className="relative flex flex-col justify-center items-center w-full ">
-                            <div className="flex items-center justify-center w-12 h-12 bg-black text-white rounded-full">
-                                2
-                            </div>
-                            <p className="text-black">{steps[1]}</p>
-                        </div>
-                    </div>
-                    <div>
-                        <p className="text-left text-gray-500">เลขบัตรประชาชน</p>
-                        <input
-                            type="text"
-                            id="idNumber"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="กรอกเลขบัตรประชาชน"
-                            required
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <div className="flex flex-row gap-10">
-                            <div className="w-full">
-                                <p className="text-gray-500 text-left">ชื่อจริง</p>
-                                <input
-                                    type="text"
-                                    id="firstName"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="กรอกชื่อจริง"
-                                    required
-                                />
-                            </div>
-                            <div className="w-full">
-                                <p className="text-gray-500 text-left">นามสกุล</p>
-                                <input
-                                    type="text"
-                                    id="lastName"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="กรอกนามสกุล"
-                                    required
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <p className="text-left text-gray-500">เบอร์โทรศัพท์</p>
-                        <input
-                            type="text"
-                            id="phoneNumber"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="กรอกเบอร์โทรศัพท์"
-                            required
-                        />
-                    </div>
-                    <div className="flex flex-row space-x-2">
-                        <div className="flex-1">
-                            <button
-                                id="prevButton"
-                                onClick={handlePrev}
-                                className="bg-silverSand text-white w-full p-3 rounded-full hover:bg-stone-700 hover:text-white"
-                            >
-                                ย้อนกลับ
-                            </button>
-                        </div>
-                        <div className="flex-1">
-                            <button
-                                id="registerButton"
-                                onClick={handleNext}
-                                className="bg-silverSand text-white w-full p-3 rounded-full hover:bg-stone-700 hover:text-white"
-                            >
-                                ลงทะเบียน
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+          <div className="">
+            <p className="text-left text-gray-500">อีเมลของคุณ</p>
+            <input
+              type="email"
+              id="email"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+              placeholder="กรอกที่อยู่อีเมล"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <div className="flex flex-row gap-10">
+              <div className="w-full">
+                <p className="text-gray-500 text-left">รหัสผ่าน</p>
+                <input
+                  type="password"
+                  id="password"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="กรอกรหัสผ่าน"
+                  required
+                />
+              </div>
+              <div className="w-full">
+                <p className="text-gray-500 text-left">ยืนยันรหัสผ่าน</p>
+                <input
+                  type="password"
+                  id="confirm-password"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="กรอกรหัสผ่าน"
+                  required
+                />
+              </div>
+            </div>
+            <p className="font-light text-gray-500 text-left">
+              ใช้ 8 ตัวอักษรหรือมากกว่าที่มีการผสมผสานของตัวอักษร ตัวเลข
+              และสัญลักษณ์
+            </p>
+          </div>
+          <div>
+            <button
+              id="nextButton"
+              onClick={handleNext}
+              className="bg-silverSand text-white w-full p-3 rounded-full hover:bg-stone-700 hover:text-white"
+            >
+              ถัดไป
+            </button>
+          </div>
         </div>
-    );
+      )}
+      {currentStep === 1 && (
+        <div className="space-y-4 p-5 w-[50rem] ">
+          <div className="flex justify-between">
+            <div className="relative flex flex-col justify-center items-center w-full opacity-40">
+              <div className="flex items-center justify-center w-12 h-12 bg-black text-white rounded-full">
+                1
+              </div>
+              <p className="text-black">{steps[0]}</p>
+            </div>
+            <div className="relative flex items-center w-full">
+              <div className="h-1 w-full bg-black" />
+            </div>
+            <div className="relative flex flex-col justify-center items-center w-full ">
+              <div className="flex items-center justify-center w-12 h-12 bg-black text-white rounded-full">
+                2
+              </div>
+              <p className="text-black">{steps[1]}</p>
+            </div>
+          </div>
+          <div>
+            <p className="text-left text-gray-500">เลขบัตรประชาชน</p>
+            <input
+              type="text"
+              id="idNumber"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="กรอกเลขบัตรประชาชน"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <div className="flex flex-row gap-10">
+              <div className="w-full">
+                <p className="text-gray-500 text-left">ชื่อจริง</p>
+                <input
+                  type="text"
+                  id="firstName"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="กรอกชื่อจริง"
+                  required
+                />
+              </div>
+              <div className="w-full">
+                <p className="text-gray-500 text-left">นามสกุล</p>
+                <input
+                  type="text"
+                  id="lastName"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="กรอกนามสกุล"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            <p className="text-left text-gray-500">เบอร์โทรศัพท์</p>
+            <input
+              type="text"
+              id="phoneNumber"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="กรอกเบอร์โทรศัพท์"
+              required
+            />
+          </div>
+          <div className="flex flex-row space-x-2">
+            <div className="flex-1">
+              <button
+                id="prevButton"
+                onClick={handlePrev}
+                className="bg-silverSand text-white w-full p-3 rounded-full hover:bg-stone-700 hover:text-white"
+              >
+                ย้อนกลับ
+              </button>
+            </div>
+            <div className="flex-1">
+              <Link href="/">
+                <button
+                  id="registerButton"
+                  onClick={handleNext}
+                  className="bg-silverSand text-white w-full p-3 rounded-full hover:bg-stone-700 hover:text-white"
+                >
+                  ลงทะเบียน
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default Stepper;

@@ -1,7 +1,0 @@
-.step-item {
-    @apply relative flex flex-col justify-center items-center w-36
-}
-
-.step-item::before {
-    @apply content-[''] bg-black absolute w-full h-[3px]
-}
