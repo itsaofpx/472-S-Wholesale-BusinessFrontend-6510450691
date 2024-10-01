@@ -4,12 +4,14 @@ import Image from "next/image";
 
 export default function Landing() {
   return (
-    <div className="space-y-5">
+    <div>
       {/* Navbar */}
-      <Navbar />
+      <div className="fixed w-full z-10">
+        <Navbar />
+      </div>
       
       {/* Main Content */}
-      <div className="flex flex-col lg:flex-row h-screen px-5 lg:px-10 py-5 space-y-5 lg:space-y-0 lg:space-x-10">
+      <div className="pt-20 lg:pt-24 flex flex-col lg:flex-row h-screen px-5 lg:px-10 py-5 space-y-5 lg:space-y-0 lg:space-x-10">
         
         {/* Sidebar - Filters */}
         <div className="space-y-6 w-full max-w-xs">
@@ -55,7 +57,7 @@ export default function Landing() {
                   className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center space-y-3"
                 >
                   <Image
-                    src="https://markprolighting.com/wp-content/uploads/2020/03/Cross-ballast-TL-D-3640-pic.jpg"
+                    src="https://down-th.img.susercontent.com/file/th-11134207-7r98u-ls9bjbsnmpguec.webp"
                     width={200}
                     height={200}
                     alt="Cross Ballast"
