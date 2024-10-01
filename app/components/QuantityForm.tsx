@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const QuantityForm: React.FC = () => {
-    const [quantity, setQuantity] = useState<number>(0);
+    const [quantity, setQuantity] = useState<number>(1);
 
     const handleDecrement = () => {
         if (quantity > 0) {
