@@ -14,7 +14,7 @@ export default function Landing() {
       <div className="pt-20 lg:pt-24 flex flex-col lg:flex-row h-screen px-5 lg:px-10 py-5 space-y-5 lg:space-y-0 lg:space-x-10">
         
         {/* Sidebar - Filters */}
-        <div className="space-y-6 w-full max-w-xs">
+        <div className="space-y-6 xs:w-full justify-center items-center">
           
           {/* Search Section */}
           <div>
