@@ -2,15 +2,24 @@
 import Navbar from "../components/Navbar";
 import Image from 'next/image';
 import QuantityForm from "../components/QuantityForm";
+import productData from '../product.json'; // Adjust the path as needed
 
-export default function Cart() {
+
+export default function Cart({ searchParams }: {
+    searchParams: {
+        id: number
+        qty: number
+    }
+}) {
+    const product = productData.find((item) => item.p_id == searchParams.id);
+
     return (
         <div className="bg-gray-50 min-h-screen"> {/* Background */}
             <Navbar />
             <div className="flex flex-col lg:flex-row h-full justify-center items-start p-4 lg:p-8"> {/* Container ของ flex */}
-                
+
                 {/* Flex​ ซ้าย */}
-                <div className="flex flex-col bg-white border border-gray-300 rounded-lg p-4 shadow-lg w-full lg:w-1/2 mb-4 lg:mb-0"> 
+                <div className="flex flex-col bg-white border border-gray-300 rounded-lg p-4 shadow-lg w-full lg:w-1/2 mb-4 lg:mb-0">
                     {/* Item n ตัว */}
                     {[1, 2, 3].map((item, index) => (
                         <div key={index} className="flex flex-row justify-between items-center p-4 border-b border-gray-200 last:border-b-0">
@@ -32,7 +41,7 @@ export default function Cart() {
                 </div>
 
                 {/* Flex ขวา */}
-                <div className="bg-white border border-gray-300 rounded-lg p-4 shadow-lg w-full lg:w-1/3 lg:ml-8"> 
+                <div className="bg-white border border-gray-300 rounded-lg p-4 shadow-lg w-full lg:w-1/3 lg:ml-8">
                     <h2 className="text-lg font-bold mb-4">Order Summary</h2>
                     <div className='flex flex-col'>
                         <div className='flex flex-row justify-between py-2 border-b border-gray-200'>

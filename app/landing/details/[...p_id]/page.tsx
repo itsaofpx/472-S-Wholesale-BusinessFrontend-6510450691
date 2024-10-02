@@ -5,6 +5,7 @@ import Navbar from '../../../components/Navbar';
 import { useState } from 'react';
 import { FaPlus, FaMinus } from "react-icons/fa6";
 import productData from '../../../product.json'; // Adjust the path as needed
+import Link from 'next/link';
 
 interface Params {
   p_id: number;
@@ -13,13 +14,14 @@ interface Params {
 export default function ProductDetail({ params }: { params: Params }) {
   const { p_id } = params;
 
-  const product = productData.find((item) => item.p_id == p_id); 
+  const product = productData.find((item) => item.p_id == p_id);
 
   if (!product) {
-    return <div>Product not found</div>; 
+    return <div>Product not found</div>;
   }
 
   const [countQuantity, setCountQuantity] = useState<number>(1);
+  const [mainImage, setMainImage] = useState(product.image_url_1);
 
   const handleIncrement = () => {
     setCountQuantity(countQuantity + 1);
@@ -31,6 +33,10 @@ export default function ProductDetail({ params }: { params: Params }) {
     }
   };
 
+  const handleMainImage = (image_url: string) => {
+    setMainImage(image_url)
+  }
+
   return (
     <div>
       <Navbar />
@@ -41,21 +47,24 @@ export default function ProductDetail({ params }: { params: Params }) {
             <div className='flex flex-row md:flex-col scale-75 md:scale-100 md:space-y-4 md:opacity-100'>
               {/* Thumbnails */}
               {[product.image_url_1, product.image_url_2, product.image_url_3].map((url, index) => (
-                <Image
-                  key={index}
-                  src={url}
-                  width={155}
-                  height={155}
-                  alt={`Thumbnail ${index + 1}`}
-                  className='rounded-lg cursor-pointer hover:scale-105 transition-transform duration-200'
-                />
+                <button onClick={() => handleMainImage(url)} key={index}>
+                  <Image
+                    src={url}
+                    width={155}
+                    height={155}
+                    alt={`Thumbnail ${index + 1}`}
+                    className='rounded-lg cursor-pointer hover:scale-105 transition-transform duration-200'
+                  />
+                </button>
+
+
               ))}
             </div>
 
             {/* Main Image */}
             <div className="flex-grow md:ml-4">
               <Image
-                src={product.image_url_1} // Use the first image as the main image
+                src={mainImage} // Use the first image as the main image
                 width={500}
                 height={500}
                 alt='Main product image'
@@ -72,7 +81,7 @@ export default function ProductDetail({ params }: { params: Params }) {
             </div>
 
             <div className="mt-4 text-gray-600">
-              Location: {product.p_location} 
+              Location: {product.p_location}
             </div>
 
             <div className="mt-4 text-2xl font-semibold text-green-600">
@@ -87,14 +96,27 @@ export default function ProductDetail({ params }: { params: Params }) {
                 <div className='text-xl'>{countQuantity}</div>
                 <div><button onClick={handleIncrement}><FaPlus /></button></div>
               </div>
+              <Link
+                href={{
+                  pathname: "/cart",
+                  query: {
+                    id: p_id,
+                    qty: countQuantity,
+                  },
+                }}
+              >
+                <button
+                  type="button"
+                  className="
+      text-white bg-gray-800 
+      hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 
+      font-medium rounded-full text-sm px-5 py-2.5 
+      transition-all duration-300 ease-in-out transform hover:scale-105"
+                >
+                  Add to Cart
+                </button>
+              </Link>
 
-              <button type="button" className="
-            text-white bg-gray-800 
-            hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 
-            font-medium rounded-full text-sm px-5 py-2.5 
-            transition-all duration-300 ease-in-out transform hover:scale-105">
-                Add to Cart
-              </button>
             </div>
           </div>
         </div>
