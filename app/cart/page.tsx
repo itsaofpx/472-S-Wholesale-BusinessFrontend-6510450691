@@ -6,6 +6,7 @@ import productData from '../product.json'; // Adjust the path as needed
 import Link from "next/link";
 
 
+
 export default function Cart({ searchParams }: {
     searchParams: {
         id: number

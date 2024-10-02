@@ -1,12 +1,13 @@
 import Navbar from "../components/Navbar";
 import { IoIosArrowForward } from "react-icons/io";
 import { FaRegFileAlt } from "react-icons/fa";
+import Link from "next/link";
 
 export default function Orders() {
     return (
         <div>
             <Navbar />
-            <div className="flex flex-col items-center justify-center min-h-screen p-5 space-y-6">
+            <div className="flex flex-col items-center justify-start flex-grow p-5 space-y-6 pt-24 ">
                 <div className="flex flex-col space-y-4 w-full max-w-2xl">
                     <div className="flex flex-row items-center text-sm space-x-2 self-start">
                         <a href="/landing" className="opacity-70">Home</a>
@@ -25,9 +26,11 @@ export default function Orders() {
                                     <FaRegFileAlt size={40} />
                                     <p className="text-lg font-bold">ID:OR19292ASNV</p>
                                 </div>
+                                <Link href={`/orders/${index}`} key={index}>
                                 <div className="underline opacity-50 cursor-pointer">
                                     Details
                                 </div>
+                                </Link>
                             </div>
                         ))}
                     </div>
