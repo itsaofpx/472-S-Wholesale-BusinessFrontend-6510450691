@@ -2,26 +2,62 @@
 
 import Image from 'next/image';
 import Navbar from '../../../components/Navbar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaPlus, FaMinus } from "react-icons/fa6";
-import productData from '../../../product.json'; // Adjust the path as needed
 import Link from 'next/link';
+import Loading from '@/app/components/Loading';
 
 interface Params {
   p_id: number;
 }
 
+interface Product {
+  id: number;
+  p_name: string;
+  p_location: string;
+  p_amount: number;
+  p_price: number;
+  image_url_1: string;
+  image_url_2: string;
+  image_url_3: string;
+}
+
 export default function ProductDetail({ params }: { params: Params }) {
   const { p_id } = params;
 
-  const product = productData.find((item) => item.p_id == p_id);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const [countQuantity, setCountQuantity] = useState<number>(1);
+  const [mainImage, setMainImage] = useState('');
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/product/${p_id}`);
+        const data = await response.json();
+        setProduct(data);
+        setMainImage(data.image_url_1)
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [p_id]);
+
+
+  if (loading) {
+    return <div><Loading /></div>;
+  }
 
   if (!product) {
     return <div>Product not found</div>;
   }
 
-  const [countQuantity, setCountQuantity] = useState<number>(1);
-  const [mainImage, setMainImage] = useState(product.image_url_1);
+  
 
   const handleIncrement = () => {
     setCountQuantity(countQuantity + 1);
