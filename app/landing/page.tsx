@@ -9,6 +9,7 @@ import Loading from "../components/Loading";
 export default function Landing() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  
 
   // Fetch product data from the API
   useEffect(() => {
