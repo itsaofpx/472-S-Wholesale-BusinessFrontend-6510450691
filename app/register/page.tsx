@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import ErrorText from "../components/ErrorText";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function Register() {
   const steps: string[] = [
@@ -82,11 +85,154 @@ export default function Register() {
   const [provinceStr, setProvinceStr] = useState<string>("");
   const [zipCodeStr, setZipCodeStr] = useState<string>("");
 
+  // Error Message
+  const [emailError, setEmailError] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<string>("");
+  const [confirmError, setConfirmError] = useState<string>("");
+  const [idStrError, setIdStrError] = useState<string>("");
+  const [fnameStrError, setFnameStrError] = useState<string>("");
+  const [lnameStrError, setLnameStrError] = useState<string>("");
+  const [PhoneNumStrError, setPhoneNumStrError] = useState<string>("");
+  const [addressStrError, setAddressStrError] = useState<string>("");
+  const [subDistrictStrError, setSubDistrictStrError] = useState<string>("");
+  const [districtStrError, setDistrictStrError] = useState<string>("");
+  const [provinceStrError, setProvinceStrError] = useState<string>("");
+  const [zipCodeStrError, setZipCodeStrError] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<number>(0); // Start with the first step
 
+  const router = useRouter();
+
+  async function Register(
+    email: string,
+    password: string,
+    credentialId: string,
+    fName: string,
+    lName: string,
+    phoneNum: string,
+    addressStr: string
+  ): Promise<boolean> {
+    const url = "http://localhost:8000/register";
+    try {
+      const response = await axios.post(url, {
+        credential_id: credentialId,
+        f_name: fName,
+        l_name: lName,
+        phone_number: phoneNum,
+        email: email,
+        password: password,
+        address: addressStr,
+      });
+      return true;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        // Handle Axios-specific error
+        alert(error.response.data?.message || "Registration failed");
+      } else {
+        // Handle non-Axios errors
+        alert("An unexpected error occurred");
+      }
+      return false;
+    }
+  }
+
+  const handleRegister = async () => {
+    const address = `${addressStr} ${subDistrictStr} ${districtStr} ${provinceStr} ${zipCodeStr}`;
+    const isRegistered = await Register(
+      emailStr,
+      passwordStr,
+      IDStr,
+      fnameStr,
+      lnameStr,
+      PhoneNumStr,
+      address
+    );
+
+    if (isRegistered) {
+      router.push("/");
+    } else {
+      // ? Notification Toast
+      alert("Registration failed, not redirecting.");
+    }
+  };
+
   const handleNext = (): void => {
-    // Increment the current step if it is less than the number of steps
-    if (currentStep < steps.length - 1) {
+    // Clear previous error messages
+    setEmailError("");
+    setPasswordError("");
+    setConfirmError("");
+    setIdStrError("");
+    setFnameStrError("");
+    setLnameStrError("");
+    setPhoneNumStrError("");
+    setAddressStrError("");
+    setSubDistrictStrError("");
+    setDistrictStrError("");
+    setProvinceStrError("");
+    setZipCodeStrError("");
+
+    let hasError = false;
+
+    if (currentStep === 0) {
+      // Step 1: Check if email, password, and confirm password are empty
+      if (!emailStr) {
+        setEmailError("กรุณากรอกอีเมลของคุณ");
+        hasError = true;
+      }
+      if (!passwordStr) {
+        setPasswordError("กรุณากรอกรหัสผ่านของคุณ");
+        hasError = true;
+      }
+      if (!confirmStr) {
+        setConfirmError("กรุณากรอกยืนยันรหัสผ่าน");
+        hasError = true;
+      }
+      if (passwordStr && confirmStr && passwordStr !== confirmStr) {
+        setConfirmError("รหัสผ่านไม่ตรงกัน");
+        hasError = true;
+      }
+    } else if (currentStep === 1) {
+      // Step 2: Check if ID, first name, last name, and phone number are empty
+      if (!IDStr) {
+        setIdStrError("กรุณากรอกเลขบัตรประชาชน");
+        hasError = true;
+      }
+      if (!fnameStr) {
+        setFnameStrError("กรุณากรอกชื่อจริง");
+        hasError = true;
+      }
+      if (!lnameStr) {
+        setLnameStrError("กรุณากรอกนามสกุล");
+        hasError = true;
+      }
+      if (!PhoneNumStr) {
+        setPhoneNumStrError("กรุณากรอกเบอร์โทรศัพท์");
+        hasError = true;
+      }
+    } else if (currentStep === 2) {
+      // Step 3: Check if address, sub-district, district, province, and zip code are empty
+      if (!addressStr) {
+        setAddressStrError("กรุณากรอกที่อยู่");
+        hasError = true;
+      }
+      if (!subDistrictStr) {
+        setSubDistrictStrError("กรุณากรอกแขวง/ตำบล");
+        hasError = true;
+      }
+      if (!districtStr) {
+        setDistrictStrError("กรุณากรอกเขต/อำเภอ");
+        hasError = true;
+      }
+      if (!provinceStr) {
+        setProvinceStrError("กรุณากรอกจังหวัด");
+        hasError = true;
+      }
+      if (!zipCodeStr) {
+        setZipCodeStrError("กรุณากรอกรหัสไปรษณีย์");
+        hasError = true;
+      }
+    }
+
+    if (!hasError) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -97,6 +243,7 @@ export default function Register() {
       setCurrentStep(currentStep - 1);
     }
   };
+
   return (
     <div className="h-screen flex justify-center items-center ">
       <div className="text-center space-y-16 border p-20">
@@ -154,6 +301,7 @@ export default function Register() {
                   required
                   onChange={handleChangeEmail}
                 />
+                <ErrorText message={emailError} />
               </div>
               <div className="space-y-2">
                 <div className="flex flex-row gap-10">
@@ -168,6 +316,7 @@ export default function Register() {
                       required
                       onChange={handleChangePassword}
                     />
+                    <ErrorText message={passwordError} />
                   </div>
                   <div className="w-full">
                     <p className="text-gray-500 text-left">ยืนยันรหัสผ่าน</p>
@@ -180,6 +329,7 @@ export default function Register() {
                       required
                       onChange={handleChangeConfirm}
                     />
+                    <ErrorText message={confirmError} />
                   </div>
                 </div>
                 <p className="font-light text-gray-500 text-left">
@@ -238,6 +388,7 @@ export default function Register() {
                   required
                   onChange={handleChangeID}
                 />
+                <ErrorText message={idStrError} />
               </div>
               <div className="space-y-2">
                 <div className="flex flex-row gap-10">
@@ -252,6 +403,7 @@ export default function Register() {
                       required
                       onChange={handleChangeFname}
                     />
+                    <ErrorText message={fnameStrError} />
                   </div>
                   <div className="w-full">
                     <p className="text-gray-500 text-left">นามสกุล</p>
@@ -264,6 +416,7 @@ export default function Register() {
                       required
                       onChange={handleChangeLname}
                     />
+                    <ErrorText message={lnameStrError} />
                   </div>
                 </div>
               </div>
@@ -278,6 +431,7 @@ export default function Register() {
                   required
                   onChange={handleChangePhoneNum}
                 />
+                <ErrorText message={PhoneNumStrError} />
               </div>
               <div className="flex flex-row space-x-2">
                 <div className="flex-1">
@@ -343,6 +497,7 @@ export default function Register() {
                   required
                   onChange={handleChangeAddress}
                 />
+                <ErrorText message={addressStrError} />
               </div>
               <div className="space-y-2">
                 <div className="flex flex-row gap-10">
@@ -357,6 +512,7 @@ export default function Register() {
                       required
                       onChange={handleChangeSubDistrict}
                     />
+                    <ErrorText message={subDistrictStrError} />
                   </div>
                   <div className="w-full">
                     <p className="text-gray-500 text-left">เขต/อำเภอ</p>
@@ -369,6 +525,7 @@ export default function Register() {
                       required
                       onChange={handleChangeDistrict}
                     />
+                    <ErrorText message={districtStrError} />
                   </div>
                 </div>
               </div>
@@ -385,6 +542,7 @@ export default function Register() {
                       required
                       onChange={handleChangeProvince}
                     />
+                    <ErrorText message={provinceStrError} />
                   </div>
                   <div className="w-full">
                     <p className="text-gray-500 text-left">รหัสไปรษณีย์</p>
@@ -397,6 +555,7 @@ export default function Register() {
                       required
                       onChange={handleChangeZipCode}
                     />
+                    <ErrorText message={zipCodeStrError} />
                   </div>
                 </div>
               </div>
@@ -411,15 +570,13 @@ export default function Register() {
                   </button>
                 </div>
                 <div className="flex-1">
-                  <Link href="/">
-                    <button
-                      id="registerButton"
-                      onClick={handleNext}
-                      className="bg-silverSand text-white w-full p-3 rounded-full hover:bg-stone-700 hover:text-white"
-                    >
-                      ลงทะเบียน
-                    </button>
-                  </Link>
+                  <button
+                    id="registerButton"
+                    onClick={handleRegister}
+                    className="bg-silverSand text-white w-full p-3 rounded-full hover:bg-stone-700 hover:text-white"
+                  >
+                    ลงทะเบียน
+                  </button>
                 </div>
               </div>
             </div>
