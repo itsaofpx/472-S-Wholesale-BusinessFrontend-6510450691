@@ -9,7 +9,7 @@ import Loading from "../components/Loading";
 export default function Landing() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+  const [userID, setUserID] = useState("");
 
   // Fetch product data from the API
   useEffect(() => {
@@ -27,6 +27,11 @@ export default function Landing() {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    setUserID(sessionStorage.getItem("user_id") || "Guest");
+  }, []);
+
+  console.log(userID)
 
   if (loading) {
     return (
@@ -59,7 +64,6 @@ export default function Landing() {
               />
             </div>
           </div>
-
           {/* Price Range Section */}
           <div className="space-y-2">
             <h2 className="font-semibold text-lg">Price</h2>
@@ -82,9 +86,8 @@ export default function Landing() {
         {/* Product Grid */}
         <div className="flex-1 overflow-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products == null && (
-              <div></div>
-            ) } {products != null && (
+            {products == null && <div></div>}{" "}
+            {products != null &&
               products.map(
                 (product: {
                   id: string;
@@ -106,8 +109,7 @@ export default function Landing() {
                     </div>
                   </Link>
                 )
-              )
-            )}
+              )}
           </div>
         </div>
       </div>
