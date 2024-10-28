@@ -1,19 +1,47 @@
 "use client";
 import Navbar from "../../components/Navbar";
 import Image from 'next/image';
-import QuantityForm from "../../components/QuantityForm";
-import productData from '../../product.json'; // Adjust the path as needed
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { notify } from "../../components/Toast";
 
+interface CartItem {
+    id: number;
+    p_name: string;
+    p_location: string;
+    p_amount: number;
+    p_price: number;
+    image_url_1: string;
+    quantity: number;
+  }
 
+export default function Cart() {
 
-export default function Cart({ searchParams }: {
-    searchParams: {
-        id: number
-        qty: number
+    const [cart, setCart] = useState<CartItem[]>([]);
+    const [total, setTotal] = useState<number>(0);
+
+    useEffect(() => {
+        const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        setCart(storedCart)
+        calculateTotal(storedCart)
+   
+    }, [])
+
+    const calculateTotal = (cart : CartItem[]) => {
+        const newTotal = cart.reduce((acc, item) => acc + item.p_price * item.quantity, 0);
+        setTotal(newTotal)
+        console.log(newTotal)
     }
-}) {
-    const product = productData.find((item) => item.p_id == searchParams.id);
+    const handleQuantityChange = (id: number, newQuantity: number) => {
+        const updatedCart = cart.map(item =>
+          item.id === id ? { ...item, quantity: newQuantity } : item
+        );
+    
+        setCart(updatedCart);
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        calculateTotal(updatedCart);
+        notify("Quantity updated");
+      };
 
     return (
         <div className="bg-gray-50 min-h-screen"> {/* Background */}
@@ -52,11 +80,11 @@ export default function Cart({ searchParams }: {
                         <div className="flex flex-col bg-white border border-gray-300 rounded-lg p-6 shadow-xl flex-grow"> 
                             <h2 className="text-xl font-bold mb-4">Shopping Cart</h2>
                             {/* n::Items */}
-                            {[1].map((item, index) => (
+                            {cart.map((item, index) => (
                                 <article key={index} className="flex justify-between items-center py-4 border-b border-gray-200 last:border-b-0">
                                     <div className="bg-gray-200 p-2 rounded-lg shadow">
                                         <Image
-                                            src='https://markprolighting.com/wp-content/uploads/2016/10/WQSL1326.jpg'
+                                            src={item.image_url_1}
                                             width={155}
                                             height={155}
                                             alt={`Thumbnail ${item}`}
@@ -64,10 +92,32 @@ export default function Cart({ searchParams }: {
                                         />
                                     </div>
                                     <div className="text-gray-800 font-medium text-sm lg:text-base p-4">
-                                        LUNAR ballast 1x36W (40W) L36.800.1
+                                        {item.p_name}
                                     </div>
                                     <div className="ml-4">
-                                        <QuantityForm />
+                                      {/* Quantity Controls */}
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() =>
+                    handleQuantityChange(
+                      item.id,
+                      Math.max(1, item.quantity - 1)
+                    )
+                  }
+                  className="text-gray-600 px-2 py-1 rounded-lg bg-gray-200"
+                >
+                  -
+                </button>
+                <span className="px-2">{item.quantity}</span>
+                <button
+                  onClick={() =>
+                    handleQuantityChange(item.id, item.quantity + 1)
+                  }
+                  className="text-gray-600 px-2 py-1 rounded-lg bg-gray-200"
+                >
+                  +
+                </button>
+              </div>
                                     </div>
                                 </article>
                             ))}
@@ -81,34 +131,26 @@ export default function Cart({ searchParams }: {
                         <div className="flex flex-col space-y-4">
                             <div className="flex justify-between py-2 border-b border-gray-200">
                                 <span>Subtotal</span>
-                                <span>$565</span>
+                                <span>{total}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-200">
                                 <span>Discount</span>
-                                <span>-$112</span>
+                                {/* TODO :   */}
+                                <span>NEEDED TO GET FROM USER'S TIER</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-200">
                                 <span>Total</span>
                                 <span>$453</span>
                             </div>
 
-                            <div className="flex items-center justify-between mt-4">
-                                <select className="border border-gray-300 rounded-lg p-2 w-2/3 mr-2 focus:outline-none focus:ring-2 focus:ring-gray-300">
-                                    <option value="">Select Promo Code</option>
-                                    <option value="PROMO10">PROMO10 - 10% off</option>
-                                    <option value="PROMO20">PROMO20 - 20% off</option>
-                                </select>
-                                <button className="bg-gray-800 text-white font-medium rounded-lg py-2 px-4 hover:bg-gray-700 transition-colors duration-300">
-                                    Apply
+
+                            <div className="mt-4">
+                                <Link href="invoice">
+                                <button className="w-full bg-gray-800 text-white font-medium rounded-lg py-2 hover:bg-gray-700 transition-colors duration-300">
+                                    สั่งซื้อ
                                 </button>
+                                </Link>
                             </div>
-                            <Link href="/user/invoice">
-                                <div className="mt-4">
-                                    <button className="w-full bg-gray-800 text-white font-medium rounded-lg py-2 hover:bg-gray-700 transition-colors duration-300">
-                                        สั่งซื้อ
-                                    </button>
-                                </div>
-                            </Link>
                         </div>
                     </div>
                 </div>
