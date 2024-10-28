@@ -1,9 +1,33 @@
+'use client'
 import Navbar from "@/app/components/Navbar";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
 
-export default function OrderDetail() {
+interface Params {
+    o_id: number;
+}
+
+export default function OrderDetail({ params }: { params: Params }) {
+    const {o_id} = params
+    const [orderLines, setOrdersLines] = useState([])
+    const [order, setOrder] = useState("")
+
+    useEffect(() => {
+        async function fetchData() {
+          try {
+              const url = `http://localhost:8000/orders/${o_id}/orderLines`;
+              const response = await axios.get(url);
+              setOrdersLines(response.data)
+          } catch (error) {
+            console.error("Error fetching orders:", error);
+          }
+        }
+        fetchData();
+      }, []);
+
     return (
         <div className="min-h-screen flex flex-col">
             <header className="fixed w-full z-10">
@@ -29,13 +53,13 @@ export default function OrderDetail() {
                         </div>
 
                         <div className="w-full space-y-5 mt-5">
-                            {[...Array(5)].map((_, index) => (
+                            {orderLines.map((orderLine, index) => (
                                 <div className="flex flex-row justify-between items-center border p-5 rounded-xl shadow-md" key={index}>
                                     <div className="flex flex-row items-center">
-                                        <Image src='https://down-th.img.susercontent.com/file/th-11134207-7qul5-lhh53ds822eb48.webp' width={100} height={100} alt="Product Image" />
-                                        <p className="">GO Product 1</p>
+                                        <Image src={orderLine.product_img} width={100} height={100} alt="Product Image" />
+                                        <p className="">{orderLine.product_name}</p>
                                     </div>
-                                    <div className="text-lg font-medium">จำนวน 25 ชิ้น</div>
+                                    <div className="text-lg font-medium">{orderLine.quantity}</div>
                                 </div>
                             ))}
                         </div>
