@@ -94,7 +94,7 @@ export default function Cart() {
               <ol className="flex items-center space-x-2">
                 <li>
                   <Link
-                    href="/landing"
+                    href="/user/landing"
                     className="text-gray-500 hover:text-black font-semibold"
                   >
                     Home
@@ -174,9 +174,11 @@ export default function Cart() {
               </div>
 
               <div className="mt-4">
-                <button className="w-full bg-gray-800 text-white font-medium rounded-lg py-2 hover:bg-gray-700 transition-colors duration-300">
-                  สั่งซื้อ
-                </button>
+                <Link href="orders">
+                    <button className="w-full bg-gray-800 text-white font-medium rounded-lg py-2 hover:bg-gray-700 transition-colors duration-300">
+                    สั่งซื้อ
+                    </button>
+                </Link>
               </div>
             </div>
           </div>
