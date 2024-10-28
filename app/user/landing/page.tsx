@@ -9,7 +9,7 @@ import Loading from "../../components/Loading";
 export default function Landing() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userID, setUserID] = useState("");
+  const [userID, setUserID] = useState();
 
   // Fetch product data from the API
   useEffect(() => {
@@ -28,10 +28,12 @@ export default function Landing() {
   }, []);
 
   useEffect(() => {
-    setUserID(sessionStorage.getItem("user_id") || "Guest");
+    const userString = sessionStorage.getItem("user");
+    if (userString) {
+      const user = JSON.parse(userString);
+      setUserID(user.id || "Guest");
+    }
   }, []);
-
-  console.log(userID)
 
   if (loading) {
     return (
@@ -94,10 +96,7 @@ export default function Landing() {
                   image_url_1: string;
                   p_name: string;
                 }) => (
-                  <Link
-                    key={product.id}
-                    href={`/user/landing/details/${product.id}`}
-                  >
+                  <Link key={product.id} href={`landing/details/${product.id}`}>
                     <div className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center space-y-3">
                       <Image
                         src={product.image_url_1}
