@@ -1,12 +1,9 @@
 "use client";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import Image from 'next/image';
-
-
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ImInsertTemplate } from "react-icons/im";
-import { notify } from "../components/Toast";
+import { notify } from "../../components/Toast";
 
 interface CartItem {
     id: number;
@@ -66,7 +63,7 @@ export default function Cart() {
                         <nav className="pl-3 text-lg mb-2">
                             <ol className="flex items-center space-x-2">
                                 <li>
-                                    <Link href="/landing" className="text-gray-500 hover:text-black font-semibold">
+                                    <Link href="/user/landing" className="text-gray-500 hover:text-black font-semibold">
                                         Home
                                     </Link>
                                 </li>
@@ -148,9 +145,11 @@ export default function Cart() {
 
 
                             <div className="mt-4">
+                                <Link href="invoice">
                                 <button className="w-full bg-gray-800 text-white font-medium rounded-lg py-2 hover:bg-gray-700 transition-colors duration-300">
                                     สั่งซื้อ
                                 </button>
+                                </Link>
                             </div>
                         </div>
                     </div>

@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
-import Navbar from "../../../components/Navbar";
+import Image from 'next/image';
+import Navbar from '../../../../components/Navbar';
+import Loading from '@/app/components/Loading';
 import { useEffect, useState } from "react";
-import Toast, { notify } from "../../../components/Toast"
-import Loading from "@/app/components/Loading";
+import Toast, { notify } from "../../../../components/Toast"
 
 interface Params {
   p_id: number;
@@ -158,7 +158,6 @@ export default function ProductDetail({ params }: { params: Params }) {
             </div>
 
             <div className="flex flex-row mt-4 space-x-4">
-              
                 <button
                 onClick={addToCart}
                   type="button"
