@@ -1,7 +1,7 @@
 "use client";
 
 import Image from 'next/image';
-import Navbar from '../../../components/Navbar';
+import Navbar from '../../../../components/Navbar';
 import { useEffect, useState } from 'react';
 import { FaPlus, FaMinus } from "react-icons/fa6";
 import Link from 'next/link';
@@ -134,7 +134,7 @@ export default function ProductDetail({ params }: { params: Params }) {
               </div>
               <Link
                 href={{
-                  pathname: "/cart",
+                  pathname: "/user/landing",
                   query: {
                     id: p_id,
                     qty: countQuantity,

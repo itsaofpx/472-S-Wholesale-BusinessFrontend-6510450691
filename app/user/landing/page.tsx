@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Loading from "../components/Loading";
+import Loading from "../../components/Loading";
 
 export default function Landing() {
   const [products, setProducts] = useState([]);
@@ -96,7 +96,7 @@ export default function Landing() {
                 }) => (
                   <Link
                     key={product.id}
-                    href={`/landing/details/${product.id}`}
+                    href={`/user/landing/details/${product.id}`}
                   >
                     <div className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center space-y-3">
                       <Image

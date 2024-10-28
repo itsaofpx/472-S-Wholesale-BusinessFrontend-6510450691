@@ -1,4 +1,4 @@
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import { IoIosArrowForward } from "react-icons/io";
 import { FaRegFileAlt } from "react-icons/fa";
 import Link from "next/link";

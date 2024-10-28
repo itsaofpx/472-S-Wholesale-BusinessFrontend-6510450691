@@ -1,8 +1,8 @@
 "use client";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import Image from 'next/image';
-import QuantityForm from "../components/QuantityForm";
-import productData from '../product.json'; // Adjust the path as needed
+import QuantityForm from "../../components/QuantityForm";
+import productData from '../../product.json'; // Adjust the path as needed
 import Link from "next/link";
 
 
@@ -35,7 +35,7 @@ export default function Cart({ searchParams }: {
                         <nav className="pl-3 text-lg mb-2">
                             <ol className="flex items-center space-x-2">
                                 <li>
-                                    <Link href="/landing" className="text-gray-500 hover:text-black font-semibold">
+                                    <Link href="/user/landing" className="text-gray-500 hover:text-black font-semibold">
                                         Home
                                     </Link>
                                 </li>
@@ -102,12 +102,13 @@ export default function Cart({ searchParams }: {
                                     Apply
                                 </button>
                             </div>
-
-                            <div className="mt-4">
-                                <button className="w-full bg-gray-800 text-white font-medium rounded-lg py-2 hover:bg-gray-700 transition-colors duration-300">
-                                    สั่งซื้อ
-                                </button>
-                            </div>
+                            <Link href="/user/invoice">
+                                <div className="mt-4">
+                                    <button className="w-full bg-gray-800 text-white font-medium rounded-lg py-2 hover:bg-gray-700 transition-colors duration-300">
+                                        สั่งซื้อ
+                                    </button>
+                                </div>
+                            </Link>
                         </div>
                     </div>
                 </div>

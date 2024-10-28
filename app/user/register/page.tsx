@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import ErrorText from "../components/ErrorText";
+import ErrorText from "../../components/ErrorText";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 

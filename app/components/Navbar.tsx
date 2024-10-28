@@ -7,7 +7,7 @@ export default function Navbar() {
         
         {/* Left side: Logo */}
         <div>
-          <a href="/landing" className="text-2xl font-bold tracking-wide text-white hover:text-gray-300">
+          <a href="/user/landing" className="text-2xl font-bold tracking-wide text-white hover:text-gray-300">
             LOGO
           </a>
         </div>
@@ -17,7 +17,7 @@ export default function Navbar() {
           
           {/* Shopping Cart */}
           <button className="hover:text-gray-300">
-            <Link href= '/cart'>
+            <Link href= '/user/cart'>
             <FaShoppingCart size={24} />
             </Link>
           </button>
