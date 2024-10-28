@@ -9,7 +9,7 @@ import Loading from "../components/Loading";
 export default function Landing() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userID, setUserID] = useState("");
+  const [userID, setUserID] = useState();
 
   // Fetch product data from the API
   useEffect(() => {
@@ -28,10 +28,12 @@ export default function Landing() {
   }, []);
 
   useEffect(() => {
-    setUserID(sessionStorage.getItem("user_id") || "Guest");
+    const userString = sessionStorage.getItem("user");
+    if (userString) {
+      const user = JSON.parse(userString);
+      setUserID(user.id || "Guest");
+    }
   }, []);
-
-  console.log(userID)
 
   if (loading) {
     return (

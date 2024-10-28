@@ -5,11 +5,18 @@ import { useState } from "react";
 import ErrorText from "./components/ErrorText";
 import axios from "axios";
 
+interface UserInfo {
+  user_id: number;
+  user_role: number;
+  user_tier: number;
+}
+
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [userInfo, setUserInfo] = useState<UserInfo>();
   const router = useRouter();
 
   async function Login(email: string, password: string) {
@@ -24,10 +31,12 @@ export default function Home() {
           },
         }
       );
-      sessionStorage.setItem("user_id", response.data.user_id.id);
 
+      console.log(response.data.user);
 
-      console.log(response);
+      sessionStorage.setItem("user", JSON.stringify(response.data.user));
+
+        console.log(response);
       return response; // Return response if login is successful
     } catch (error) {
       console.error("Login failed:", error);
@@ -35,8 +44,6 @@ export default function Home() {
       return null; // Return null if there's an error
     }
   }
-
-
 
   const handleLogin = async () => {
     setEmailError("");
