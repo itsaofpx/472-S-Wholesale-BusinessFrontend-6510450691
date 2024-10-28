@@ -24,7 +24,9 @@ export default function Navbar() {
 
           {/* Notifications */}
           <button className="hover:text-gray-300">
-            <FaBell size={24} />
+            <Link href = "/user/orders">
+              <FaBell size={24} />
+            </Link>
           </button>
 
           {/* Profile */}

@@ -13,16 +13,15 @@ export default function OrderDetail() {
                 <div className="flex flex-col items-center justify-start flex-grow p-5 space-y-6 pt-24 pb-24 "> {/* Adjust padding here */}
                     <div className="w-full max-w-4xl">
                         <div className="flex flex-row items-center text-sm space-x-2">
-                            <a href="/landing" className="opacity-70">Home</a>
+                            <a href="../landing" className="opacity-70">Home</a>
                             <IoIosArrowForward className="opacity-70" />
-                            <a href="/orders" className="opacity-70">Orders</a>
+                            <a href="../orders" className="opacity-70">Orders</a>
                             <IoIosArrowForward className="opacity-70" />
                             <p className="font-bold">Orders_ID</p>
                         </div>
 
                         <div className="w-full bg-white shadow-md rounded-xl p-5 mt-5">
                             <p className="font-bold text-lg mb-2">ORDER: OR19292ASNV</p>
-                            <p>From Quote : Q52MASJVLASD</p>
                             <div className="flex flex-row justify-between mt-3">
                                 <p>Status: Shipping</p>
                                 <p>Tracking Number : TH123179581</p>
