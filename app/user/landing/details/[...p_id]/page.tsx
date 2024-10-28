@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Navbar from "../../../components/Navbar";
+import Navbar from "../../../../components/Navbar";
 import { useEffect, useState } from "react";
-import Toast, { notify } from "../../../components/Toast"
+import Toast, { notify } from "../../../../components/Toast"
 import Loading from "@/app/components/Loading";
 
 interface Params {

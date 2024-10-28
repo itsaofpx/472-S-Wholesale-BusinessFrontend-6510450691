@@ -1,9 +1,9 @@
 "use client";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { notify } from "../components/Toast";
+import { notify } from "../../components/Toast";
 import axios, { Axios } from "axios";
 
 interface CartItem {

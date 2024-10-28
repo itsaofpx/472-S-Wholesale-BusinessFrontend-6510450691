@@ -55,7 +55,7 @@ export default function Home() {
     if (email && password) {
       const loginSuccess = await Login(email, password);
       if (loginSuccess?.status == 200) {
-        router.push("/landing");
+        router.push("/user/landing");
       } else {
         setPasswordError("Login failed. Please check your credentials.");
       }
@@ -126,7 +126,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-        <Link href="/register">
+        <Link href="/user/register">
           <button
             id="createAccountButton"
             className="bg-white border border-black w-full p-3 rounded-full hover:bg-stone-700 hover:text-white"
