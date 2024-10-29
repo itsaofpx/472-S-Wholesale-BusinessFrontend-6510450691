@@ -98,25 +98,29 @@ export default function OrderDetail({ params }: { params: Params }) {
             </div>
 
             <div className="w-full space-y-5 mt-5">
-              {orderLines.map((orderLine, index) => (
-                <div
-                  className="flex flex-row justify-between items-center border p-5 rounded-xl shadow-md"
-                  key={index}
-                >
-                  <div className="flex flex-row items-center">
-                    <Image
-                      src={orderLine.product_img}
-                      width={100}
-                      height={100}
-                      alt="Product Image"
-                    />
-                    <p className="">{orderLine.product_name}</p>
+              {orderLines && orderLines.length > 0 ? (
+                orderLines.map((orderLine, index) => (
+                  <div
+                    className="flex flex-row justify-between items-center border p-5 rounded-xl shadow-md"
+                    key={index}
+                  >
+                    <div className="flex flex-row items-center">
+                      <Image
+                        src={orderLine.product_img}
+                        width={100}
+                        height={100}
+                        alt="Product Image"
+                      />
+                      <p className="ml-4">{orderLine.product_name}</p>
+                    </div>
+                    <div className="text-lg font-medium">
+                      {orderLine.quantity}
+                    </div>
                   </div>
-                  <div className="text-lg font-medium">
-                    {orderLine.quantity}
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-center">No order lines found.</p>
+              )}
             </div>
           </div>
         </div>
