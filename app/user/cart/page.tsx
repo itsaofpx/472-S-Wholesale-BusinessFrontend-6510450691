@@ -4,10 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { notify } from "../../components/Toast";
-import axios, { Axios } from "axios";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface CartItem {
-  id: number;
+  p_id: number;
   p_name: string;
   p_location: string;
   p_amount: number;
@@ -21,6 +22,8 @@ export default function Cart() {
   const [total, setTotal] = useState<number>(0);
   const [discountPercent, setDiscountPercent] = useState<number>();
   const [discount, setDiscount] = useState<number>(0);
+  const router = useRouter();
+  
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -68,7 +71,7 @@ export default function Cart() {
 
   const handleQuantityChange = (id: number, newQuantity: number) => {
     const updatedCart = cart.map((item) =>
-      item.id === id ? { ...item, quantity: newQuantity } : item
+      item.p_id === id ? { ...item, quantity: newQuantity } : item
     );
 
     setCart(updatedCart);
@@ -76,6 +79,30 @@ export default function Cart() {
     calculateTotal(updatedCart);
     notify("Quantity updated");
   };
+
+  const handleCreateOrder = async () => {
+    try {
+      const userString = sessionStorage.getItem("user");
+      if (userString) {
+        const user = JSON.parse(userString);
+        if (user && user.id) {
+          const url = `http://localhost:8000/order`;
+          const response = await axios.post(url, { userID: user.id });
+          console.log("Response data:", response.data);
+          localStorage.removeItem("cart")
+          router.push("orders")
+        } else {
+          console.error("User ID not found.");
+        }
+      } else {
+        console.error("No user data in sessionStorage.");
+      }
+    } catch (error) {
+      console.error("Error in API request",error);
+    }
+  };
+  
+  
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -132,7 +159,7 @@ export default function Cart() {
                       <button
                         onClick={() =>
                           handleQuantityChange(
-                            item.id,
+                            item.p_id,
                             Math.max(1, item.quantity - 1)
                           )
                         }
@@ -143,7 +170,7 @@ export default function Cart() {
                       <span className="px-2">{item.quantity}</span>
                       <button
                         onClick={() =>
-                          handleQuantityChange(item.id, item.quantity + 1)
+                          handleQuantityChange(item.p_id, item.quantity + 1)
                         }
                         className="text-gray-600 px-2 py-1 rounded-lg bg-gray-200"
                       >
@@ -174,11 +201,9 @@ export default function Cart() {
               </div>
 
               <div className="mt-4">
-                <Link href="orders">
-                    <button className="w-full bg-gray-800 text-white font-medium rounded-lg py-2 hover:bg-gray-700 transition-colors duration-300">
+                    <button className="w-full bg-gray-800 text-white font-medium rounded-lg py-2 hover:bg-gray-700 transition-colors duration-300" onClick={handleCreateOrder}>
                     สั่งซื้อ
                     </button>
-                </Link>
               </div>
             </div>
           </div>
