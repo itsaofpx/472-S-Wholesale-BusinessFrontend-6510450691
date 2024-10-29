@@ -53,23 +53,27 @@ export default function Orders() {
           </div>
 
           <div className="flex flex-col space-y-3 w-full">
-            {orders.map((order) => (
-              <div
-                className="flex flex-row justify-between border items-center p-4 rounded-lg"
-                key={order.id}
-              >
-                <div className="flex flex-row items-center space-x-3">
-                  <FaRegFileAlt size={40} />
-                  <p className="text-lg font-bold">ID: {order.id}</p>
-                </div>
+            {orders && orders.length > 0 ? (
+              orders.map((order) => (
+                <div
+                  className="flex flex-row justify-between border items-center p-4 rounded-lg"
+                  key={order.id}
+                >
+                  <div className="flex flex-row items-center space-x-3">
+                    <FaRegFileAlt size={40} />
+                    <p className="text-lg font-bold">ID: {order.id}</p>
+                  </div>
 
-                <div className="underline opacity-50 cursor-pointer">
-                  <button onClick={() => router.push(`orders/${order.id}`)}>
-                    Details
-                  </button>
+                  <div className="underline opacity-50 cursor-pointer">
+                    <button onClick={() => router.push(`orders/${order.id}`)}>
+                      Details
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p>No orders found.</p>
+            )}
           </div>
         </div>
       </div>
