@@ -21,6 +21,7 @@ export default function OrderDetail({ params }: { params: Params }) {
   const { o_id } = params;
   const [orderLines, setOrdersLines] = useState<OrderLine[]>([]);
   const [orderStatus, setOrderStatus] = useState<string>("");
+  const [trackingNumber, setTrackingNumber] = useState<string>("");
   const router = useRouter();
 
   const statusMapping = {
@@ -31,7 +32,7 @@ export default function OrderDetail({ params }: { params: Params }) {
     X: "Canceled",
   };
 
-  console.log("Order ID:", o_id);
+
 
   useEffect(() => {
     async function fetchData() {
@@ -39,6 +40,7 @@ export default function OrderDetail({ params }: { params: Params }) {
         const orderLineUrl = `http://localhost:8000/orders/${o_id}/orderlines`;
         const orderLineResponse = await axios.get(orderLineUrl);
         setOrdersLines(orderLineResponse.data);
+        console.log("Order Lines:", orderLineResponse.data);
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
@@ -52,6 +54,7 @@ export default function OrderDetail({ params }: { params: Params }) {
         const orderUrl = `http://localhost:8000/order/${o_id}`;
         const orderResponse = await axios.get(orderUrl);
         setOrderStatus(orderResponse.data.o_status);
+        setTrackingNumber(orderResponse.data.tracking_number);
       } catch (error) {
         console.error(error);
       }
@@ -93,7 +96,7 @@ export default function OrderDetail({ params }: { params: Params }) {
                   Status :{" "}
                   {statusMapping[orderStatus as keyof typeof statusMapping]}
                 </p>
-                <p>Tracking Number : TH123179581</p>
+                <p>Tracking Number : {trackingNumber || "No Tracking Number"}</p>
               </div>
             </div>
 
