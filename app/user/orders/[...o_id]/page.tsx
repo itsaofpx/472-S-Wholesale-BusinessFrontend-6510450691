@@ -9,24 +9,34 @@ import { IoIosArrowForward } from "react-icons/io";
 interface Params {
     o_id: number;
 }
+interface OrderLine {
+    product_id: number;
+    product_name: string;
+    product_img: string;
+    quantity: number;
+}
 
 export default function OrderDetail({ params }: { params: Params }) {
     const {o_id} = params
-    const [orderLines, setOrdersLines] = useState([])
     const [order, setOrder] = useState("")
+    const [orderLines, setOrdersLines] = useState<OrderLine[]>([]);
+
+    console.log("Order ID:", o_id);
 
     useEffect(() => {
         async function fetchData() {
-          try {
-              const url = `http://localhost:8000/orders/${o_id}/orderLines`;
-              const response = await axios.get(url);
-              setOrdersLines(response.data)
-          } catch (error) {
-            console.error("Error fetching orders:", error);
-          }
+            try {
+                const url = `http://localhost:8000/orders/${o_id}/orderlines`;
+                console.log("Fetching URL:", url);
+                const response = await axios.get(url);
+                console.log("Response Data : ",response.data)
+                setOrdersLines(response.data);
+            } catch (error) {
+                console.error("Error fetching orders:", error);
+            }
         }
         fetchData();
-      }, []);
+    }, [o_id]); 
 
     return (
         <div className="min-h-screen flex flex-col">
