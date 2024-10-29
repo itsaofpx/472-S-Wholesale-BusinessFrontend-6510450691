@@ -1,46 +1,189 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Navbar from "@/app/components/Navbar";
-const InvoiceRecord = ({ service, qty, rate, lineTotal }) => (
+import axios from "axios";
+import { useSearchParams } from "next/navigation";
+import { QRCode } from "react-qrcode-logo";
+import { useRouter } from "next/navigation";
+
+const InvoiceRecord = ({
+  service,
+  qty,
+  rate,
+  lineTotal,
+}: {
+  service: string;
+  qty: number;
+  rate: string;
+  lineTotal: string;
+}) => (
   <div className="flex flex-col md:flex-row justify-between py-4 border-b border-gray-200 text-sm md:text-base">
     <div className="w-full md:w-2/5 text-left">{service}</div>
-    <div className="w-full md:w-1/5 text-center md:text-right mt-2 md:mt-0">{qty}</div>
-    <div className="w-full md:w-1/5 text-center md:text-right mt-2 md:mt-0">{rate}</div>
+    <div className="w-full md:w-1/5 text-center md:text-right mt-2 md:mt-0">
+      {qty}
+    </div>
+    <div className="w-full md:w-1/5 text-center md:text-right mt-2 md:mt-0">
+      {rate}
+    </div>
     <div className="w-full md:w-1/5 text-right mt-2 md:mt-0">{lineTotal}</div>
   </div>
 );
 
-export default function Invoice() {
-  const records = [
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-    { service: "Item Name", qty: 1, rate: "$3,000.00", lineTotal: "$3,000.00" },
-  ];
+interface orderDataInterface {
+  orderline_id: number;
+  id: number;
+  oder_id: number;
+  pice: number;
+  product_amount: number;
+  product_id: number;
+  product_img: string;
+  product_name: string;
+  product_price: number;
+  quantity: number;
+}
 
-  const subtotal = 9000;
+export default function Invoice() {
+  const searchParams = useSearchParams();
+  const o_id = searchParams.get("o_id");
+  const [orderData, setOrderData] = useState<orderDataInterface[]>([]);
+  const [loading, setLoading] = useState(true);
+  const date = Date.now();
+  const invoiceDate = new Date(date);
+  const dueDate = new Date();
+  dueDate.setDate(invoiceDate.getDate() + 15);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [receipt, setReceipt] = useState<File | null>(null);
+  const [message, setMessage] = useState("");
+  const router = useRouter();
+
+  console.log("Invoice Date : ", invoiceDate.toDateString());
+  console.log("Due Date : ", dueDate.toDateString());
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!o_id) return;
+
+      try {
+        setLoading(true);
+        const orderLineUrl = `http://localhost:8000/orders/${o_id}/orderlines`;
+        const orderLineResponse = await axios.get(orderLineUrl);
+        setOrderData(orderLineResponse.data);
+        console.log("orderline Response : ", orderLineResponse.data);
+      } catch (error) {
+        console.error("Error fetching order data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [o_id]);
+
+  if (loading) {
+    return (
+      <div className="bg-gray-50 min-h-screen">
+        <header className="fixed w-full z-10">
+          <Navbar />
+        </header>
+        <div className="pt-[6rem] p-4 text-center">Loading invoice data...</div>
+      </div>
+    );
+  }
+
+  if (!o_id) {
+    return (
+      <div className="bg-gray-50 min-h-screen">
+        <header className="fixed w-full z-10">
+          <Navbar />
+        </header>
+        <div className="pt-[6rem] p-4 text-center text-red-600">
+          Invalid order ID
+        </div>
+      </div>
+    );
+  }
+
+  // Transform orderData to match InvoiceRecord requirements
+  const records = orderData.map((order) => ({
+    service: order.product_name,
+    qty: order.quantity,
+    rate: `$${order.product_price.toFixed(2)}`, // Format product price as string
+    lineTotal: `$${(order.product_price * order.quantity).toFixed(2)}`, // Calculate line total
+  }));
+
+  // Calculate subtotal from line totals in records
+  const subtotal = records.reduce(
+    (acc: number, record) =>
+      acc + parseFloat(record.lineTotal.replace("$", "").replace(",", "")),
+    0
+  );
   const taxRate = 0.1;
   const taxAmount = subtotal * taxRate;
   const total = subtotal + taxAmount;
 
+  const handlePayButton = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setReceipt(file);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (receipt) {
+      const userString = sessionStorage.getItem("user");
+      if (userString) {
+        const user = JSON.parse(userString);
+        const userID = user.id;
+        const updatedOrder = {
+          o_status: "PD",
+          userID: userID,
+        };
+        try {
+          const updateStatusUrl = `http://localhost:8000/order/${o_id}`;
+          const updateStatusResponse = await axios.put(
+            updateStatusUrl,
+            updatedOrder,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          console.log("UpdateStatusResponse", updateStatusResponse.data);
+
+          setMessage("Order status updated successfully.");
+          router.push(`orders/${o_id}`);
+
+          setIsModalOpen(false); // Close the modal after submission
+        } catch (error) {
+          console.error("Error updating order:", error);
+          setMessage("Failed to update the order.");
+        }
+      } else {
+        alert("can't find user");
+      }
+    } else {
+      setMessage("Please upload a receipt first.");
+    }
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <header className="fixed w-full z-10">
-          <Navbar />
+        <Navbar />
       </header>
       <div className="pt-[6rem] p-4 bg-white shadow-md rounded-lg text-gray-800 max-w-4xl mx-auto">
         {/* Header */}
         <header className="mb-8">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-4 md:mb-0">INVOICE</h1>
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-4 md:mb-0">
+              INVOICE
+            </h1>
             <div className="text-right">
               <p className="text-gray-500">Business address</p>
               <p className="text-gray-500">Bangkok, TH - 42190</p>
@@ -67,7 +210,7 @@ export default function Invoice() {
               </div>
               <div>
                 <h3 className="font-semibold text-sm">Invoice date</h3>
-                <p className="text-gray-600">01 Aug, 2023</p>
+                <p className="text-gray-600">{invoiceDate.toDateString()}</p>
               </div>
               <div>
                 <h3 className="font-semibold text-sm">Reference</h3>
@@ -75,7 +218,7 @@ export default function Invoice() {
               </div>
               <div>
                 <h3 className="font-semibold text-sm">Due date</h3>
-                <p className="text-gray-600">15 Aug, 2023</p>
+                <p className="text-gray-600">{dueDate.toDateString()}</p>
               </div>
             </div>
           </div>
@@ -102,31 +245,64 @@ export default function Invoice() {
 
         {/* Payment Summary */}
         <div className="mt-6 text-right text-gray-700">
-          {/* SubTotal */}
           <div className="flex justify-between py-2">
             <div>Subtotal</div>
             <div className="font-medium">${subtotal.toFixed(2)}</div>
           </div>
 
-          {/* Taxes */}
           <div className="flex justify-between py-2">
             <div>Tax (10%)</div>
             <div className="font-medium">${taxAmount.toFixed(2)}</div>
           </div>
 
-          {/* Total */}
           <div className="flex justify-between py-4 border-t border-gray-200 font-bold text-lg">
             <div>Total due</div>
             <div className="text-gray-900">${total.toFixed(2)}</div>
           </div>
         </div>
 
-        {/* Footer */}
         <footer className="flex justify-end mt-8">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition duration-200 w-full md:w-auto">
+          <button
+            onClick={handlePayButton}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition duration-200 w-full md:w-auto"
+          >
             Pay Now
           </button>
         </footer>
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
+              <div className="mb-4 text-start ">
+                <QRCode value="https://example.com" size={150} />
+                <p className="text-gray-500 text-sm mt-2">Scan this QR code</p>
+              </div>
+              <div className="mb-4">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="block w-full text-sm text-gray-500
+                     file:mr-4 file:py-2 file:px-4
+                     file:rounded-full file:border-0
+                     file:text-sm file:font-semibold
+                     file:bg-blue-50 file:text-blue-700
+                     hover:file:bg-blue-100"
+                />
+              </div>
+              <button
+                onClick={handleSubmit}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg w-full"
+              >
+                Submit
+              </button>
+              {message && (
+                <p className="mt-4 text-center text-lg font-semibold">
+                  {message}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
