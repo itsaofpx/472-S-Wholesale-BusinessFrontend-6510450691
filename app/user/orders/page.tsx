@@ -5,6 +5,7 @@ import { FaRegFileAlt } from "react-icons/fa";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 // Define the order type
 type Order = {
@@ -13,6 +14,7 @@ type Order = {
 
 export default function Orders() {
   const [orders, setOrders] = useState<Order[]>([]); // State to store order objects with ID
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchData() {
@@ -58,11 +60,12 @@ export default function Orders() {
                   <FaRegFileAlt size={40} />
                   <p className="text-lg font-bold">ID: {order.id}</p>
                 </div>
-                <Link href={`orders/${order.id}`}>
-                  <div className="underline opacity-50 cursor-pointer">
+
+                <div className="underline opacity-50 cursor-pointer">
+                  <button onClick={() => router.push(`orders/${order.id}`)}>
                     Details
-                  </div>
-                </Link>
+                  </button>
+                </div>
               </div>
             ))}
           </div>

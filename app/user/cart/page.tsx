@@ -8,12 +8,18 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 interface CartItem {
-  p_id: number;
+  id: number;
   p_name: string;
   p_location: string;
   p_amount: number;
   p_price: number;
   image_url_1: string;
+  quantity: number;
+}
+
+interface OrderLine {
+  product_id: number;
+  order_id: number;
   quantity: number;
 }
 
@@ -23,7 +29,6 @@ export default function Cart() {
   const [discountPercent, setDiscountPercent] = useState<number>();
   const [discount, setDiscount] = useState<number>(0);
   const router = useRouter();
-  
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -71,7 +76,7 @@ export default function Cart() {
 
   const handleQuantityChange = (id: number, newQuantity: number) => {
     const updatedCart = cart.map((item) =>
-      item.p_id === id ? { ...item, quantity: newQuantity } : item
+      item.id === id ? { ...item, quantity: newQuantity } : item
     );
 
     setCart(updatedCart);
@@ -82,28 +87,53 @@ export default function Cart() {
 
   const handleCreateOrder = async () => {
     try {
-      const userString = sessionStorage.getItem("user");
-      if (userString) {
-        const user = JSON.parse(userString);
-        if (user && user.id) {
-          const url = `http://localhost:8000/order`;
-          const response = await axios.post(url, { userID: user.id });
-          console.log("Response data:", response.data);
-          localStorage.removeItem("cart")
-          router.push("orders")
-        } else {
-          console.error("User ID not found.");
-        }
-      } else {
-        console.error("No user data in sessionStorage.");
-      }
-    } catch (error) {
-      console.error("Error in API request",error);
-    }
-  };
-  
-  
+        const userString = sessionStorage.getItem("user");
+        if (userString) {
+            const user = JSON.parse(userString);
+            if (user && user.id) {
+                // First, create the order and get the order ID
+                const orderUrl = `http://localhost:8000/order`;
+                const orderResponse = await axios.post(orderUrl, { userID: user.id });
+                const orderID = orderResponse.data.id;
+                console.log("Order ID:", orderID);
 
+                console.log("Order Response", orderResponse.data);
+
+                // Log cart items to check if p_id exists
+                console.log("Cart items:", cart);
+                cart.forEach((item, index) => {
+                  console.log(`Item ${index + 1}: p_id = ${item.id}, quantity = ${item.quantity}`);
+              });
+              
+                // Transform cart items into order lines
+                const orderLines: OrderLine[] = cart.map(item => ({
+                
+                    product_id: item.id,   
+                    order_id: orderID,
+                    quantity: item.quantity
+                }));
+
+                console.log("Mapped OrderLines:", orderLines);
+
+                // Send order lines to the server
+                const orderLineUrl = `http://localhost:8000/orderlines`;
+                const orderLineResponse = await axios.post(orderLineUrl, orderLines);
+                
+                console.log("Order lines created:", orderLineResponse.data);
+
+                //  clear the cart and navigate to orders page
+                localStorage.removeItem("cart");
+                router.push("orders");
+            } else {
+                console.error("User ID not found.");
+            }
+        } else {
+            console.error("No user data in sessionStorage.");
+        }
+    } catch (error) {
+        console.error("Error in API request:", error);
+    }
+};
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Background */}
@@ -159,7 +189,7 @@ export default function Cart() {
                       <button
                         onClick={() =>
                           handleQuantityChange(
-                            item.p_id,
+                            item.id,
                             Math.max(1, item.quantity - 1)
                           )
                         }
@@ -170,7 +200,7 @@ export default function Cart() {
                       <span className="px-2">{item.quantity}</span>
                       <button
                         onClick={() =>
-                          handleQuantityChange(item.p_id, item.quantity + 1)
+                          handleQuantityChange(item.id, item.quantity + 1)
                         }
                         className="text-gray-600 px-2 py-1 rounded-lg bg-gray-200"
                       >
@@ -201,9 +231,12 @@ export default function Cart() {
               </div>
 
               <div className="mt-4">
-                    <button className="w-full bg-gray-800 text-white font-medium rounded-lg py-2 hover:bg-gray-700 transition-colors duration-300" onClick={handleCreateOrder}>
-                    สั่งซื้อ
-                    </button>
+                <button
+                  className="w-full bg-gray-800 text-white font-medium rounded-lg py-2 hover:bg-gray-700 transition-colors duration-300"
+                  onClick={handleCreateOrder}
+                >
+                  สั่งซื้อ
+                </button>
               </div>
             </div>
           </div>
