@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import BackButton from "@/app/components/BackButton";
 
 // Define the order type
 type Order = {
@@ -36,6 +37,7 @@ export default function Orders() {
   return (
     <div>
       <Navbar />
+      <BackButton />
       <div className="flex flex-col items-center justify-start flex-grow p-5 space-y-6 pt-24 ">
         <div className="flex flex-col space-y-4 w-full max-w-2xl">
           <div className="flex flex-row items-center text-sm space-x-2 self-start">

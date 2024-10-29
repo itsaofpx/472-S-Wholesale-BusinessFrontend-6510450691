@@ -1,4 +1,5 @@
 "use client";
+import BackButton from "@/app/components/BackButton";
 import Navbar from "@/app/components/Navbar";
 import axios from "axios";
 import Image from "next/image";
@@ -68,6 +69,7 @@ export default function OrderDetail({ params }: { params: Params }) {
     <div className="min-h-screen flex flex-col">
       <header className="fixed w-full z-10">
         <Navbar />
+        <BackButton />
       </header>
       <main>
         <div className="flex flex-col items-center justify-start flex-grow p-5 space-y-6 pt-24 pb-24 ">

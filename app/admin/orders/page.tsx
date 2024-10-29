@@ -1,6 +1,7 @@
 "use client";
 
 import AdminNavbar from "@/app/components/AdminNavbar";
+import BackButton from "@/app/components/BackButton";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -49,6 +50,7 @@ export default function Orders() {
     <div>
       <header>
         <AdminNavbar />
+        <BackButton />
       </header>
       <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-semibold mb-4">Orders</h1>

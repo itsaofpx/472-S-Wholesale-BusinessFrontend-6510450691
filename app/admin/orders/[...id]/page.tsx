@@ -1,6 +1,7 @@
 "use client";
 
 import AdminNavbar from "@/app/components/AdminNavbar";
+import BackButton from "@/app/components/BackButton";
 import Loading from "@/app/components/Loading";
 import axios from "axios";
 import { useParams } from "next/navigation";
@@ -173,6 +174,7 @@ export default function OrderDetail() {
     <div>
       <header>
         <AdminNavbar />
+        <BackButton />
       </header>
       <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-semibold mb-4">รายละเอียดคำสั่งซื้อ</h1>

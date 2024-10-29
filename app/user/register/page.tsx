@@ -4,6 +4,7 @@ import Link from "next/link";
 import ErrorText from "../../components/ErrorText";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import BackButton from "@/app/components/BackButton";
 
 export default function Register() {
   const steps: string[] = [
@@ -247,6 +248,7 @@ export default function Register() {
   return (
     <div className="h-screen flex justify-center items-center ">
       <div className="text-center space-y-16 border p-20">
+        <div className="text-left"><BackButton /> </div>
         <div className="space-y-2">
           <p className="font-bold text-3xl">สร้างบัญชีผู้ใช้</p>
           <p className="font-bold text-xs">

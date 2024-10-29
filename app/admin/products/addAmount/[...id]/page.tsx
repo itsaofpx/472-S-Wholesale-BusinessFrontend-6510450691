@@ -1,5 +1,6 @@
 "use client";
 import AdminNavbar from "@/app/components/AdminNavbar";
+import BackButton from "@/app/components/BackButton";
 import Loading from "@/app/components/Loading";
 import axios from "axios";
 import { useRouter, useParams } from "next/navigation";
@@ -142,6 +143,9 @@ export default function AddAmount() {
     <div>
       <header>
         <AdminNavbar />
+        <div className="bg-gray-100">
+        <BackButton />
+        </div>
       </header>
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
