@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import AdminNavbar from "@/app/components/AdminNavbar";
+import BackButton from "@/app/components/BackButton";
 
 export default function ProductDetails() {
   const [product, setProduct] = useState(null);
@@ -104,6 +105,8 @@ export default function ProductDetails() {
     <div>
       <header>
         <AdminNavbar />
+        <div className="bg-gray-100"><BackButton /></div>
+        
       </header>
       <div className="p-10 bg-gray-100 min-h-screen">
         <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">

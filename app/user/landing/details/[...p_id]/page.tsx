@@ -5,6 +5,7 @@ import Navbar from "../../../../components/Navbar";
 import { useEffect, useState } from "react";
 import Toast, { notify } from "../../../../components/Toast";
 import Loading from "@/app/components/Loading";
+import BackButton from "@/app/components/BackButton";
 
 interface Params {
   p_id: number;
@@ -97,6 +98,7 @@ export default function ProductDetail({ params }: { params: Params }) {
     <div>
       <Navbar />
       <Toast />
+      <BackButton /> 
       <div className="flex h-screen items-center justify-center px-4">
         <div className="flex flex-col md:flex-row justify-between items-center md:mx-10 border border-gray-300 shadow-lg rounded-lg p-4">
           {/* Left Side: Image Thumbnails and Main Image */}

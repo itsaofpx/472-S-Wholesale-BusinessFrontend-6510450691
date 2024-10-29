@@ -1,6 +1,7 @@
 "use client";
 
 import AdminNavbar from "@/app/components/AdminNavbar";
+import BackButton from "@/app/components/BackButton";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -47,6 +48,7 @@ export default function Users() {
         <div>
             <header>
                 <AdminNavbar />
+                <BackButton />
             </header>
             <main className="p-6">
                 <h1 className="text-2xl font-bold mb-4">Users</h1>

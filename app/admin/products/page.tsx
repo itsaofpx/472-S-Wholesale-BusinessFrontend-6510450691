@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminNavbar from "@/app/components/AdminNavbar";
+import BackButton from "@/app/components/BackButton";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -79,6 +80,9 @@ export default function Products() {
     <div>
       <header>
         <AdminNavbar />
+        <div className="bg-gray-100">
+        <BackButton />
+        </div>
       </header>
       <div className="p-10 bg-gray-100 min-h-screen">
         {/* Search Input and Button */}

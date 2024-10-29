@@ -5,6 +5,7 @@ import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { QRCode } from "react-qrcode-logo";
 import { useRouter } from "next/navigation";
+import BackButton from "@/app/components/BackButton";
 
 const InvoiceRecord = ({
   service,
@@ -176,6 +177,7 @@ export default function Invoice() {
     <div className="bg-gray-50 min-h-screen">
       <header className="fixed w-full z-10">
         <Navbar />
+        <BackButton />
       </header>
       <div className="pt-[6rem] p-4 bg-white shadow-md rounded-lg text-gray-800 max-w-4xl mx-auto">
         {/* Header */}

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { notify } from "../../components/Toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import BackButton from "@/app/components/BackButton";
 
 interface CartItem {
   id: number;
@@ -140,6 +141,7 @@ export default function Cart() {
       {/* Navbar */}
       <header className="fixed w-full z-10">
         <Navbar />
+        <BackButton />
       </header>
       {/* Main */}
       <main className="pt-24 lg:pt-32 pb-8 lg:pb-16 lg:px-8 px-4 space-y-8">
