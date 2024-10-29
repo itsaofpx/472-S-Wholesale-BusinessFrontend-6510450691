@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import AdminNavbar from "@/app/components/AdminNavbar";
 
 // ...
 
@@ -21,9 +22,11 @@ export default function AddProduct() {
 
   useEffect(() => {
     const fetchSuppliers = async () => {
+      setLoading(true);
       try {
         const response = await axios.get("http://localhost:8000/suppliers");
         setSuppliers(response.data);
+        setLoading(false);
       } catch (err) {
         console.error("Error fetching suppliers:", err);
       }
@@ -108,7 +111,9 @@ export default function AddProduct() {
   
 
   return (
-    <div className="p-10 bg-gray-100 min-h-screen">
+    <div>
+      <header><AdminNavbar/></header>
+      <div className="p-10 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-4">เพิ่มสินค้าใหม่</h1>
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
@@ -237,5 +242,7 @@ export default function AddProduct() {
         )}
       </form>
     </div>
+    </div>
+    
   );
 }
