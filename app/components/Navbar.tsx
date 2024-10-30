@@ -31,7 +31,9 @@ export default function Navbar() {
 
           {/* Profile */}
           <button className="hover:text-gray-300">
-            <FaUserCircle size={24} />
+            <Link href = "/user/profile">
+              <FaUserCircle size={24} />
+            </Link>
           </button>
         </div>
       </div>

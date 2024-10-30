@@ -112,7 +112,6 @@ export default function Home() {
                 <p>
                   โดยดำเนินการต่อ คุณยอมรับ{" "}
                   <a
-                    href="https://www.youtube.com/?app=desktop&gl=TH&hl=th"
                     target="_blank"
                     className="underline font-bold"
                   >
