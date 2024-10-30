@@ -57,9 +57,6 @@ export default function Invoice() {
   const [message, setMessage] = useState("");
   const router = useRouter();
 
-  console.log("Invoice Date : ", invoiceDate.toDateString());
-  console.log("Due Date : ", dueDate.toDateString());
-
   useEffect(() => {
     async function fetchData() {
       if (!o_id) return;
@@ -118,9 +115,14 @@ export default function Invoice() {
       acc + parseFloat(record.lineTotal.replace("$", "").replace(",", "")),
     0
   );
+
+  // Retrieve discount from session storage
+  const discount = parseFloat(sessionStorage.getItem("discount") || "0");
+  const discountedSubtotal = subtotal - discount;
+
   const taxRate = 0.1;
-  const taxAmount = subtotal * taxRate;
-  const total = subtotal + taxAmount;
+  const taxAmount = discountedSubtotal * taxRate;
+  const total = discountedSubtotal + taxAmount;
 
   const handlePayButton = () => {
     setIsModalOpen(true);
@@ -158,6 +160,7 @@ export default function Invoice() {
           console.log("UpdateStatusResponse", updateStatusResponse.data);
 
           setMessage("Order status updated successfully.");
+          sessionStorage.removeItem("discount");
           router.push(`orders/${o_id}`);
 
           setIsModalOpen(false); // Close the modal after submission
@@ -248,8 +251,8 @@ export default function Invoice() {
         {/* Payment Summary */}
         <div className="mt-6 text-right text-gray-700">
           <div className="flex justify-between py-2">
-            <div>Subtotal</div>
-            <div className="font-medium">${subtotal.toFixed(2)}</div>
+            <div>Subtotal + Discount</div>
+            <div className="font-medium">${discountedSubtotal.toFixed(2)}</div>
           </div>
 
           <div className="flex justify-between py-2">

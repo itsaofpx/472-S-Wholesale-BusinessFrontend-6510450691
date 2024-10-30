@@ -62,6 +62,7 @@ export default function Cart() {
     if (total && discountPercent !== undefined) {
       const totalDiscount = total - total * discountPercent;
       setDiscount(totalDiscount);
+      sessionStorage.setItem("discount", totalDiscount.toFixed(2));
       console.log("DISCOUNT", totalDiscount);
     }
   }, [total, discountPercent]);
@@ -94,9 +95,9 @@ export default function Cart() {
             if (user && user.id) {
                 // First, create the order and get the order ID
                 const orderUrl = `http://localhost:8000/order`;
-                const orderResponse = await axios.post(orderUrl, { userID: user.id });
+                const orderResponse = await axios.post(orderUrl, { userID: user.id , o_total_price: total - discount });
                 const orderID = orderResponse.data.id;
-                console.log("Order ID:", orderID);
+                
 
                 console.log("Order Response", orderResponse.data);
 
@@ -108,7 +109,7 @@ export default function Cart() {
               
                 // Transform cart items into order lines
                 const orderLines: OrderLine[] = cart.map(item => ({
-                
+                    
                     product_id: item.id,   
                     order_id: orderID,
                     quantity: item.quantity
