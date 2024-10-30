@@ -77,22 +77,33 @@ export default function Cart() {
   };
 
   const handleQuantityChange = (id: number, newQuantity: number) => {
-    const updatedCart = cart.map((item) =>
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    );
-
+    let updatedCart;
+    
+    if (newQuantity === 0) {
+      // ลบสินค้าที่ id ตรงกันออกจาก cart
+      updatedCart = cart.filter((item) => item.id !== id);
+        
+      notify("Item removed from cart");
+    } else {
+      // อัปเดตจำนวนสินค้าถ้า newQuantity มากกว่า 0
+      updatedCart = cart.map((item) =>
+        item.id === id ? { ...item, quantity: newQuantity } : item
+      );
+      notify("Quantity updated");
+    }
+  
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     calculateTotal(updatedCart);
-    notify("Quantity updated");
   };
+  
 
   const handleCreateOrder = async () => {
     try {
         const userString = sessionStorage.getItem("user");
         if (userString) {
             const user = JSON.parse(userString);
-            if (user && user.id) {
+            if (user && user.id && cart.length > 0) {
                 // First, create the order and get the order ID
                 const orderUrl = `http://localhost:8000/order`;
                 const orderResponse = await axios.post(orderUrl, { userID: user.id , o_total_price: total - discount });
@@ -116,6 +127,7 @@ export default function Cart() {
                 }));
 
                 console.log("Mapped OrderLines:", orderLines);
+
 
                 // Send order lines to the server
                 const orderLineUrl = `http://localhost:8000/orderlines`;
@@ -193,7 +205,7 @@ export default function Cart() {
                         onClick={() =>
                           handleQuantityChange(
                             item.id,
-                            Math.max(1, item.quantity - 1)
+                            Math.max(0, item.quantity - 1)
                           )
                         }
                         className="text-gray-600 px-2 py-1 rounded-lg bg-gray-200"

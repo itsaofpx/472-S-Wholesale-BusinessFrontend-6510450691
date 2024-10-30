@@ -67,6 +67,9 @@ export default function Products() {
   const handleAddProduct = () => {
     router.push("products/addProduct");
   };
+  const handleAddSupplier = () => {
+    router.push("products/addSupplier");
+  };
 
   if (loading) {
     return (
@@ -102,12 +105,18 @@ export default function Products() {
               Search
             </button>
           </div>
-          <div className="ml-4">
+          <div className="ml-4 space-x-3">
             <button
               onClick={handleAddProduct}
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
             >
               เพิ่มสินค้า
+            </button>
+            <button
+              onClick={handleAddSupplier}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+            >
+              เพิ่มผู้จำหน่าย
             </button>
           </div>
         </div>
@@ -154,7 +163,7 @@ export default function Products() {
                     Quantity: {product.p_amount}
                   </span>
                   <span className="text-indigo-600 font-bold text-lg">
-                    ${product.p_price}
+                    {product.p_price} บาท
                   </span>
                 </div>
               </div>
