@@ -190,6 +190,7 @@ export default function Invoice() {
           console.log("Transaction Response:", transactionResponse.data);
 
           sessionStorage.removeItem("discount");
+          alert("ชำระเงินสำเร็จ")
           router.push(`orders/${o_id}`);
 
           setIsModalOpen(false); // Close the modal after submission

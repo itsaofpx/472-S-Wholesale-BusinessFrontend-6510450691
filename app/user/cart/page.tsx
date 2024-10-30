@@ -103,6 +103,9 @@ export default function Cart() {
         const userString = sessionStorage.getItem("user");
         if (userString) {
             const user = JSON.parse(userString);
+            if (cart.length <= 0) {
+              alert("โปรดเลือกสินค้าก่อนทำการสั่ง!")
+            }
             if (user && user.id && cart.length > 0) {
                 // First, create the order and get the order ID
                 const orderUrl = `http://localhost:8000/order`;
