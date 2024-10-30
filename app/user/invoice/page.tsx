@@ -140,13 +140,12 @@ export default function Invoice() {
       const userString = sessionStorage.getItem("user");
       if (userString) {
         const user = JSON.parse(userString);
-        const userID = user.id;
-        const updatedOrder = {
+          const updatedOrder = {
           o_status: "PD",
-          userID: userID,
+          id: Number(o_id),
         };
         try {
-          const updateStatusUrl = `http://localhost:8000/order/${o_id}`;
+          const updateStatusUrl = `http://localhost:8000/order/status/update`;
           const updateStatusResponse = await axios.put(
             updateStatusUrl,
             updatedOrder,
