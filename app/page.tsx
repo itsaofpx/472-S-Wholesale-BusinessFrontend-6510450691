@@ -55,7 +55,12 @@ export default function Home() {
     if (email && password) {
       const loginSuccess = await Login(email, password);
       if (loginSuccess?.status == 200) {
-        router.push("/user/landing");
+        console.log(loginSuccess.data.user.role);
+        if (loginSuccess.data.user.role == 1) {
+          router.push("/user/landing");
+        } else if (loginSuccess.data.user.role == 2) {
+          router.push("/admin/products");
+        }
       } else {
         setPasswordError("Login failed. Please check your credentials.");
       }
@@ -107,7 +112,6 @@ export default function Home() {
                 <p>
                   โดยดำเนินการต่อ คุณยอมรับ{" "}
                   <a
-                    href="https://www.youtube.com/?app=desktop&gl=TH&hl=th"
                     target="_blank"
                     className="underline font-bold"
                   >

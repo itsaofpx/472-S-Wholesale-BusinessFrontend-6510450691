@@ -10,6 +10,9 @@ export default function Landing() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userID, setUserID] = useState();
+  const [name, setName] = useState("");
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
 
   // Fetch product data from the API
   useEffect(() => {
@@ -34,6 +37,23 @@ export default function Landing() {
       setUserID(user.id || "Guest");
     }
   }, []);
+
+  const handleSearch = async () => {
+      console.log(name, minPrice, maxPrice);
+      try {
+        const response = await axios.post(
+          `http://localhost:8000/products/filter`,
+          {name: name, min_price: minPrice, max_price: maxPrice}, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Error searching for products:", error);
+      }
+  };
 
   if (loading) {
     return (
@@ -63,6 +83,8 @@ export default function Landing() {
                 className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 hover:border-slate-300 shadow-sm"
                 placeholder="Type here..."
                 aria-label="Search"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
           </div>
@@ -71,17 +93,35 @@ export default function Landing() {
             <h2 className="font-semibold text-lg">Price</h2>
             <div className="flex items-center space-x-2">
               <input
-                type="text"
+                type="number"
                 className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 hover:border-slate-300 shadow-sm"
                 placeholder="฿ 0.00"
+                value={minPrice}
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value);
+                    setMinPrice(value);
+                }}
               />
               <div className="h-1 w-full bg-black" />
               <input
-                type="text"
+                type="number"
                 className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 hover:border-slate-300 shadow-sm"
                 placeholder="฿ 0.00"
+                value={maxPrice} 
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value);
+                  setMaxPrice(value);
+                }}
               />
             </div>
+          </div>
+          <div>
+          <button
+              onClick={handleSearch}
+              className="w-full px-4 py-2 bg-black text-white rounded-lg transition"
+            >
+              ค้นหาสินค้า
+            </button>
           </div>
         </div>
 
@@ -105,6 +145,7 @@ export default function Landing() {
                         alt={product.p_name}
                         className="rounded-md"
                       />
+                      <div className="text-center">{product.p_name}</div>
                     </div>
                   </Link>
                 )

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { notify } from "../../components/Toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import BackButton from "@/app/components/BackButton";
 
 interface CartItem {
   id: number;
@@ -61,6 +62,7 @@ export default function Cart() {
     if (total && discountPercent !== undefined) {
       const totalDiscount = total - total * discountPercent;
       setDiscount(totalDiscount);
+      sessionStorage.setItem("discount", totalDiscount.toFixed(2));
       console.log("DISCOUNT", totalDiscount);
     }
   }, [total, discountPercent]);
@@ -75,27 +77,38 @@ export default function Cart() {
   };
 
   const handleQuantityChange = (id: number, newQuantity: number) => {
-    const updatedCart = cart.map((item) =>
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    );
-
+    let updatedCart;
+    
+    if (newQuantity === 0) {
+      // ลบสินค้าที่ id ตรงกันออกจาก cart
+      updatedCart = cart.filter((item) => item.id !== id);
+        
+      notify("Item removed from cart");
+    } else {
+      // อัปเดตจำนวนสินค้าถ้า newQuantity มากกว่า 0
+      updatedCart = cart.map((item) =>
+        item.id === id ? { ...item, quantity: newQuantity } : item
+      );
+      notify("Quantity updated");
+    }
+  
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     calculateTotal(updatedCart);
-    notify("Quantity updated");
   };
+  
 
   const handleCreateOrder = async () => {
     try {
         const userString = sessionStorage.getItem("user");
         if (userString) {
             const user = JSON.parse(userString);
-            if (user && user.id) {
+            if (user && user.id && cart.length > 0) {
                 // First, create the order and get the order ID
                 const orderUrl = `http://localhost:8000/order`;
-                const orderResponse = await axios.post(orderUrl, { userID: user.id });
+                const orderResponse = await axios.post(orderUrl, { userID: user.id , o_total_price: total - discount });
                 const orderID = orderResponse.data.id;
-                console.log("Order ID:", orderID);
+                
 
                 console.log("Order Response", orderResponse.data);
 
@@ -107,13 +120,14 @@ export default function Cart() {
               
                 // Transform cart items into order lines
                 const orderLines: OrderLine[] = cart.map(item => ({
-                
+                    
                     product_id: item.id,   
                     order_id: orderID,
                     quantity: item.quantity
                 }));
 
                 console.log("Mapped OrderLines:", orderLines);
+
 
                 // Send order lines to the server
                 const orderLineUrl = `http://localhost:8000/orderlines`;
@@ -140,6 +154,7 @@ export default function Cart() {
       {/* Navbar */}
       <header className="fixed w-full z-10">
         <Navbar />
+        <BackButton />
       </header>
       {/* Main */}
       <main className="pt-24 lg:pt-32 pb-8 lg:pb-16 lg:px-8 px-4 space-y-8">
@@ -190,7 +205,7 @@ export default function Cart() {
                         onClick={() =>
                           handleQuantityChange(
                             item.id,
-                            Math.max(1, item.quantity - 1)
+                            Math.max(0, item.quantity - 1)
                           )
                         }
                         className="text-gray-600 px-2 py-1 rounded-lg bg-gray-200"

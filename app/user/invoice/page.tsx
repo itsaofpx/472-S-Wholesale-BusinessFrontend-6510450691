@@ -5,6 +5,7 @@ import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { QRCode } from "react-qrcode-logo";
 import { useRouter } from "next/navigation";
+import BackButton from "@/app/components/BackButton";
 
 const InvoiceRecord = ({
   service,
@@ -128,9 +129,14 @@ export default function Invoice() {
       acc + parseFloat(record.lineTotal.replace("$", "").replace(",", "")),
     0
   );
+
+  // Retrieve discount from session storage
+  const discount = parseFloat(sessionStorage.getItem("discount") || "0");
+  const discountedSubtotal = subtotal - discount;
+
   const taxRate = 0.1;
-  const taxAmount = subtotal * taxRate;
-  const total = subtotal + taxAmount;
+  const taxAmount = discountedSubtotal * taxRate;
+  const total = discountedSubtotal + taxAmount;
 
   const handlePayButton = () => {
     setIsModalOpen(true);
@@ -150,13 +156,12 @@ export default function Invoice() {
       const userString = sessionStorage.getItem("user");
       if (userString) {
         const user = JSON.parse(userString);
-        const userID = user.id;
-        const updatedOrder = {
+          const updatedOrder = {
           o_status: "PD",
-          userID: userID,
+          id: Number(o_id),
         };
         try {
-          const updateStatusUrl = `http://localhost:8000/order/${o_id}`;
+          const updateStatusUrl = `http://localhost:8000/order/status/update`;
           const updateStatusResponse = await axios.put(
             updateStatusUrl,
             updatedOrder,
@@ -191,6 +196,7 @@ export default function Invoice() {
 
           console.log("Transaction Response : ", transactionResponse.data);
 
+          sessionStorage.removeItem("discount");
           router.push(`orders/${o_id}`);
 
           setIsModalOpen(false); // Close the modal after submission
@@ -210,6 +216,7 @@ export default function Invoice() {
     <div className="bg-gray-50 min-h-screen">
       <header className="fixed w-full z-10">
         <Navbar />
+        <BackButton />
       </header>
       <div className="pt-[6rem] p-4 bg-white shadow-md rounded-lg text-gray-800 max-w-4xl mx-auto">
         {/* Header */}
@@ -280,8 +287,8 @@ export default function Invoice() {
         {/* Payment Summary */}
         <div className="mt-6 text-right text-gray-700">
           <div className="flex justify-between py-2">
-            <div>Subtotal</div>
-            <div className="font-medium">${subtotal.toFixed(2)}</div>
+            <div>Subtotal + Discount</div>
+            <div className="font-medium">${discountedSubtotal.toFixed(2)}</div>
           </div>
 
           <div className="flex justify-between py-2">

@@ -1,4 +1,5 @@
 "use client";
+import BackButton from "@/app/components/BackButton";
 import Navbar from "@/app/components/Navbar";
 import axios from "axios";
 import Image from "next/image";
@@ -21,6 +22,7 @@ export default function OrderDetail({ params }: { params: Params }) {
   const { o_id } = params;
   const [orderLines, setOrdersLines] = useState<OrderLine[]>([]);
   const [orderStatus, setOrderStatus] = useState<string>("");
+  const [trackingNumber, setTrackingNumber] = useState<string>("");
   const router = useRouter();
 
   const statusMapping = {
@@ -31,7 +33,7 @@ export default function OrderDetail({ params }: { params: Params }) {
     X: "Canceled",
   };
 
-  console.log("Order ID:", o_id);
+
 
   useEffect(() => {
     async function fetchData() {
@@ -39,6 +41,7 @@ export default function OrderDetail({ params }: { params: Params }) {
         const orderLineUrl = `http://localhost:8000/orders/${o_id}/orderlines`;
         const orderLineResponse = await axios.get(orderLineUrl);
         setOrdersLines(orderLineResponse.data);
+        console.log("Order Lines:", orderLineResponse.data);
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
@@ -52,6 +55,7 @@ export default function OrderDetail({ params }: { params: Params }) {
         const orderUrl = `http://localhost:8000/order/${o_id}`;
         const orderResponse = await axios.get(orderUrl);
         setOrderStatus(orderResponse.data.o_status);
+        setTrackingNumber(orderResponse.data.tracking_number);
       } catch (error) {
         console.error(error);
       }
@@ -68,6 +72,7 @@ export default function OrderDetail({ params }: { params: Params }) {
     <div className="min-h-screen flex flex-col">
       <header className="fixed w-full z-10">
         <Navbar />
+        <BackButton />
       </header>
       <main>
         <div className="flex flex-col items-center justify-start flex-grow p-5 space-y-6 pt-24 pb-24 ">
@@ -93,30 +98,34 @@ export default function OrderDetail({ params }: { params: Params }) {
                   Status :{" "}
                   {statusMapping[orderStatus as keyof typeof statusMapping]}
                 </p>
-                <p>Tracking Number : TH123179581</p>
+                <p>Tracking Number : {trackingNumber || "No Tracking Number"}</p>
               </div>
             </div>
 
             <div className="w-full space-y-5 mt-5">
-              {orderLines.map((orderLine, index) => (
-                <div
-                  className="flex flex-row justify-between items-center border p-5 rounded-xl shadow-md"
-                  key={index}
-                >
-                  <div className="flex flex-row items-center">
-                    <Image
-                      src={orderLine.product_img}
-                      width={100}
-                      height={100}
-                      alt="Product Image"
-                    />
-                    <p className="">{orderLine.product_name}</p>
+              {orderLines && orderLines.length > 0 ? (
+                orderLines.map((orderLine, index) => (
+                  <div
+                    className="flex flex-row justify-between items-center border p-5 rounded-xl shadow-md"
+                    key={index}
+                  >
+                    <div className="flex flex-row items-center">
+                      <Image
+                        src={orderLine.product_img}
+                        width={100}
+                        height={100}
+                        alt="Product Image"
+                      />
+                      <p className="ml-4">{orderLine.product_name}</p>
+                    </div>
+                    <div className="text-lg font-medium">
+                      {orderLine.quantity}
+                    </div>
                   </div>
-                  <div className="text-lg font-medium">
-                    {orderLine.quantity}
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-center">No order lines found.</p>
+              )}
             </div>
           </div>
         </div>

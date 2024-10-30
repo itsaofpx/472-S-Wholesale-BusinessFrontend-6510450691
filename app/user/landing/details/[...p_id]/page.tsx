@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Navbar from "../../../../components/Navbar";
 import { useEffect, useState } from "react";
-import Toast, { notify } from "../../../../components/Toast"
+import Toast, { notify } from "../../../../components/Toast";
 import Loading from "@/app/components/Loading";
+import BackButton from "@/app/components/BackButton";
 
 interface Params {
   p_id: number;
@@ -25,8 +26,6 @@ interface CartItem extends Product {
   quantity: number;
 }
 
-
-
 export default function ProductDetail({ params }: { params: Params }) {
   const { p_id } = params;
 
@@ -36,8 +35,6 @@ export default function ProductDetail({ params }: { params: Params }) {
   const [countQuantity, setCountQuantity] = useState<number>(1);
   const [mainImage, setMainImage] = useState("");
 
-
-  
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -67,46 +64,41 @@ export default function ProductDetail({ params }: { params: Params }) {
     return <div>Product not found</div>;
   }
 
-
-
   const handleMainImage = (image_url: string) => {
     setMainImage(image_url);
-
   };
 
   const addToCart = () => {
     if (!product) {
-      return ;
+      return;
     }
 
-     // Get current cart from localStorage
-     const cart = JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[];
+    // Get current cart from localStorage
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[];
 
-     // Check if the item is already in the cart
-     const existingItemIndex = cart.findIndex(item => item.id === product.id);
- 
-     if (existingItemIndex !== -1) {
-       // If the item exists, update the quantity
-       cart[existingItemIndex].quantity += 1;
-     } else {
-       // If the item doesn't exist, add it with quantity 1
-       cart.push({ ...product, quantity: 1 });
-     }
- 
-     // Save the updated cart back to localStorage
-     localStorage.setItem("cart", JSON.stringify(cart));
- 
-     // Show notification
-     notify("Product added to cart!");
-  }
+    // Check if the item is already in the cart
+    const existingItemIndex = cart.findIndex((item) => item.id === product.id);
 
+    if (existingItemIndex !== -1) {
+      // If the item exists, update the quantity
+      cart[existingItemIndex].quantity += 1;
+    } else {
+      // If the item doesn't exist, add it with quantity 1
+      cart.push({ ...product, quantity: 1 });
+    }
 
+    // Save the updated cart back to localStorage
+    localStorage.setItem("cart", JSON.stringify(cart));
 
+    // Show notification
+    notify("Product added to cart!");
+  };
 
   return (
     <div>
       <Navbar />
       <Toast />
+      <BackButton /> 
       <div className="flex h-screen items-center justify-center px-4">
         <div className="flex flex-col md:flex-row justify-between items-center md:mx-10 border border-gray-300 shadow-lg rounded-lg p-4">
           {/* Left Side: Image Thumbnails and Main Image */}
@@ -149,28 +141,22 @@ export default function ProductDetail({ params }: { params: Params }) {
               {product.p_name}
             </div>
 
-            <div className="mt-4 text-gray-600">
-              Location: {product.p_location}
-            </div>
-
             <div className="mt-4 text-2xl font-semibold text-green-600">
               {product.p_price} บาท
             </div>
 
             <div className="flex flex-row mt-4 space-x-4">
-              
-                <button
+              <button
                 onClick={addToCart}
-                  type="button"
-                  className="
+                type="button"
+                className="
       text-white bg-gray-800 
       hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 
       font-medium rounded-full text-sm px-5 py-2.5 
       transition-all duration-300 ease-in-out transform hover:scale-105"
-                >
-                  Add to Cart
-                </button>
-        
+              >
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>

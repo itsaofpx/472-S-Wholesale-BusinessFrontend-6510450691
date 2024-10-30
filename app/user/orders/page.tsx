@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import BackButton from "@/app/components/BackButton";
 
 // Define the order type
 type Order = {
@@ -36,6 +37,7 @@ export default function Orders() {
   return (
     <div>
       <Navbar />
+      <BackButton />
       <div className="flex flex-col items-center justify-start flex-grow p-5 space-y-6 pt-24 ">
         <div className="flex flex-col space-y-4 w-full max-w-2xl">
           <div className="flex flex-row items-center text-sm space-x-2 self-start">
@@ -51,23 +53,27 @@ export default function Orders() {
           </div>
 
           <div className="flex flex-col space-y-3 w-full">
-            {orders.map((order) => (
-              <div
-                className="flex flex-row justify-between border items-center p-4 rounded-lg"
-                key={order.id}
-              >
-                <div className="flex flex-row items-center space-x-3">
-                  <FaRegFileAlt size={40} />
-                  <p className="text-lg font-bold">ID: {order.id}</p>
-                </div>
+            {orders && orders.length > 0 ? (
+              orders.map((order) => (
+                <div
+                  className="flex flex-row justify-between border items-center p-4 rounded-lg"
+                  key={order.id}
+                >
+                  <div className="flex flex-row items-center space-x-3">
+                    <FaRegFileAlt size={40} />
+                    <p className="text-lg font-bold">ID: {order.id}</p>
+                  </div>
 
-                <div className="underline opacity-50 cursor-pointer">
-                  <button onClick={() => router.push(`orders/${order.id}`)}>
-                    Details
-                  </button>
+                  <div className="underline opacity-50 cursor-pointer">
+                    <button onClick={() => router.push(`orders/${order.id}`)}>
+                      Details
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p>No orders found.</p>
+            )}
           </div>
         </div>
       </div>
