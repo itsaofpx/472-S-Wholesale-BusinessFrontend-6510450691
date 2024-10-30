@@ -73,13 +73,14 @@ export default function Invoice() {
         const orderLineUrl = `http://localhost:8000/orders/${o_id}/orderlines`;
         const orderLineResponse = await axios.get(orderLineUrl);
         setOrderData(orderLineResponse.data);
-        const products = orderLineResponse.data.map(
+        const products = (orderLineResponse.data || []).map(
           (order: { product_id: number; quantity: number }) => ({
             product_id: order.product_id,
             quantity: order.quantity,
           })
         );
-        setProductData(products);
+        setProductData(products.length > 0 ? products : null);
+
         console.log("orderline Response : ", orderLineResponse.data);
       } catch (error) {
         console.error("Error fetching order data:", error);
@@ -116,15 +117,18 @@ export default function Invoice() {
   }
 
   // Transform orderData to match InvoiceRecord requirements
-  const records = orderData.map((order) => ({
-    service: order.product_name,
-    qty: order.quantity,
-    rate: `$${order.product_price.toFixed(2)}`, // Format product price as string
-    lineTotal: `$${(order.product_price * order.quantity).toFixed(2)}`, // Calculate line total
-  }));
+  const records =
+    orderData && orderData.length > 0
+      ? orderData.map((order) => ({
+          service: order.product_name,
+          qty: order.quantity,
+          rate: `$${order.product_price.toFixed(2)}`, // Format product price as string
+          lineTotal: `$${(order.product_price * order.quantity).toFixed(2)}`, // Calculate line total
+        }))
+      : null;
 
   // Calculate subtotal from line totals in records
-  const subtotal = records.reduce(
+  const subtotal = records?.reduce(
     (acc: number, record) =>
       acc + parseFloat(record.lineTotal.replace("$", "").replace(",", "")),
     0
@@ -132,7 +136,7 @@ export default function Invoice() {
 
   // Retrieve discount from session storage
   const discount = parseFloat(sessionStorage.getItem("discount") || "0");
-  const discountedSubtotal = subtotal - discount;
+  const discountedSubtotal = subtotal! - discount;
 
   const taxRate = 0.1;
   const taxAmount = discountedSubtotal * taxRate;
@@ -268,15 +272,22 @@ export default function Invoice() {
         </div>
 
         {/* Invoice Records */}
-        {records.map((record, index) => (
-          <InvoiceRecord
-            key={index}
-            service={record.service}
-            qty={record.qty}
-            rate={record.rate}
-            lineTotal={record.lineTotal}
-          />
-        ))}
+
+        {records && records.length > 0 ? (
+          records.map((record, index) => (
+            <InvoiceRecord
+              key={index}
+              service={record.service}
+              qty={record.qty}
+              rate={record.rate}
+              lineTotal={record.lineTotal}
+            />
+          ))
+        ) : (
+          <div className="text-center text-gray-500 mt-4">
+            No invoice records available.
+          </div>
+        )}
 
         {/* Payment Summary */}
         <div className="mt-6 text-right text-gray-700">
@@ -306,8 +317,17 @@ export default function Invoice() {
         </footer>
         {isModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
-              <div className="mb-4 text-start ">
+            <div className="relative bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
+              {/* Close Button */}
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-bold"
+                aria-label="Close"
+              >
+                &times;
+              </button>
+
+              <div className="mb-4 text-start">
                 <QRCode value="https://example.com" size={150} />
                 <p className="text-gray-500 text-sm mt-2">Scan this QR code</p>
               </div>
