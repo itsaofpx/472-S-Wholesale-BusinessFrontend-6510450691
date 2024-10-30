@@ -156,9 +156,9 @@ export default function Invoice() {
       const userString = sessionStorage.getItem("user");
       if (userString) {
         const user = JSON.parse(userString);
-          const updatedOrder = {
+        const updatedOrder = {
           o_status: "PD",
-          id: Number(o_id),
+          id: Number(o_id), // Ensure o_id is an integer
         };
         try {
           const updateStatusUrl = `http://localhost:8000/order/status/update`;
@@ -172,29 +172,22 @@ export default function Invoice() {
             }
           );
 
-          console.log("Product Data : ", productData);
-
           const buyProductsUrl = `http://localhost:8000/products/buy`;
           const buyProductsResponse = await axios.put(
             buyProductsUrl,
             productData
           );
 
-          console.log("Buy product response", buyProductsResponse);
           setMessage("Order status updated successfully.");
 
           const transactionUrl = `http://localhost:8000/transaction`;
-          console.log("t_net_price : ", total);
-          console.log("t_image_url : ", receiptUrl.toString());
-          console.log("order_id : ", o_id);
-
           const transactionResponse = await axios.post(transactionUrl, {
             t_net_price: total,
             t_image_url: receiptUrl.toString(),
-            order_id: o_id,
+            order_id: Number(o_id), // Convert o_id to integer
           });
 
-          console.log("Transaction Response : ", transactionResponse.data);
+          console.log("Transaction Response:", transactionResponse.data);
 
           sessionStorage.removeItem("discount");
           router.push(`orders/${o_id}`);
