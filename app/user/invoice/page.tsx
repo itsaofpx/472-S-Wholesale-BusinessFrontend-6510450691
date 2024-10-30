@@ -60,6 +60,7 @@ export default function Invoice() {
   const [receipt, setReceipt] = useState<File | null>(null);
   const [message, setMessage] = useState("");
   const [productData, setProductData] = useState<productDataInterface[]>([]);
+  const [receiptUrl, setReceiptUrl] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -139,7 +140,9 @@ export default function Invoice() {
     const file = e.target.files?.[0];
     if (file) {
       setReceipt(file);
+      setReceiptUrl(URL.createObjectURL(file));
     }
+    console.log("Receipt URL : ", receiptUrl);
   };
 
   const handleSubmit = async () => {
@@ -174,6 +177,20 @@ export default function Invoice() {
 
           console.log("Buy product response", buyProductsResponse);
           setMessage("Order status updated successfully.");
+
+          const transactionUrl = `http://localhost:8000/transaction`;
+          console.log("t_net_price : ", total);
+          console.log("t_image_url : ", receiptUrl.toString());
+          console.log("order_id : ", o_id);
+
+          const transactionResponse = await axios.post(transactionUrl, {
+            t_net_price: total,
+            t_image_url: receiptUrl.toString(),
+            order_id: o_id,
+          });
+
+          console.log("Transaction Response : ", transactionResponse.data);
+
           router.push(`orders/${o_id}`);
 
           setIsModalOpen(false); // Close the modal after submission
