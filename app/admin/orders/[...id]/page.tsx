@@ -60,6 +60,7 @@ export default function OrderDetail() {
   const [loading, setLoading] = useState(false);
   const [showFullAddress, setShowFullAddress] = useState(false);
   const [trackingNumber, setTrackingNumber] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>("");
 
   const handleToggleAddress = () => {
     setShowFullAddress((prev) => !prev);
@@ -137,6 +138,13 @@ export default function OrderDetail() {
         );
         setOrder(response.data);
         setTrackingNumber(response.data.tracking_number); // Initialize tracking number state
+
+        const imageResponse = await axios.get(
+          `http://localhost:8000/transaction/order/${response.data.id}`
+        );
+        console.log(imageResponse.data.t_image_url);
+        setImageUrl(imageResponse.data.t_image_url);
+
         setLoading(false);
       } catch (err) {
         console.error("Error fetching order:", err);
@@ -300,6 +308,20 @@ export default function OrderDetail() {
         ) : (
           <p className="text-gray-500">No order lines found.</p>
         )}
+        <div className="mt-4">
+          {imageUrl ? (
+            <>
+              <h3 className="font-semibold">Uploaded Receipt:</h3>
+              <img
+                src={imageUrl}
+                alt="Uploaded Receipt"
+                className="mt-2 max-w-full"
+              />
+            </>
+          ) : (
+            <p className="text-gray-500">Waiting For Payment</p>
+          )}
+        </div>
       </div>
     </div>
   );
