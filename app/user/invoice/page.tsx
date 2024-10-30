@@ -42,6 +42,11 @@ interface orderDataInterface {
   quantity: number;
 }
 
+interface productDataInterface {
+  product_id: number;
+  quantity: number;
+}
+
 export default function Invoice() {
   const searchParams = useSearchParams();
   const o_id = searchParams.get("o_id");
@@ -54,10 +59,8 @@ export default function Invoice() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [receipt, setReceipt] = useState<File | null>(null);
   const [message, setMessage] = useState("");
+  const [productData, setProductData] = useState<productDataInterface[]>([]);
   const router = useRouter();
-
-  console.log("Invoice Date : ", invoiceDate.toDateString());
-  console.log("Due Date : ", dueDate.toDateString());
 
   useEffect(() => {
     async function fetchData() {
@@ -68,6 +71,13 @@ export default function Invoice() {
         const orderLineUrl = `http://localhost:8000/orders/${o_id}/orderlines`;
         const orderLineResponse = await axios.get(orderLineUrl);
         setOrderData(orderLineResponse.data);
+        const products = orderLineResponse.data.map(
+          (order: { product_id: number; quantity: number }) => ({
+            product_id: order.product_id,
+            quantity: order.quantity,
+          })
+        );
+        setProductData(products);
         console.log("orderline Response : ", orderLineResponse.data);
       } catch (error) {
         console.error("Error fetching order data:", error);
@@ -154,8 +164,15 @@ export default function Invoice() {
             }
           );
 
-          console.log("UpdateStatusResponse", updateStatusResponse.data);
+          console.log("Product Data : ", productData);
 
+          const buyProductsUrl = `http://localhost:8000/products/buy`;
+          const buyProductsResponse = await axios.put(
+            buyProductsUrl,
+            productData
+          );
+
+          console.log("Buy product response", buyProductsResponse);
           setMessage("Order status updated successfully.");
           router.push(`orders/${o_id}`);
 
