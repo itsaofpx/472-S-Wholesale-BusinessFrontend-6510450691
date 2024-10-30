@@ -149,6 +149,7 @@ export default function Register() {
     );
 
     if (isRegistered) {
+      alert("สร้างบัญชีสำเร็จ")
       router.push("/");
     } else {
       // ? Notification Toast
