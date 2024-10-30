@@ -37,6 +37,7 @@ export default function AddSupplier() {
       );
       console.log("Supplier added successfully:", response.data);
       setErrorMessage(""); // Clear any previous error message
+      alert("สร้างตัวแทนจำหน่ายสำเร็จ")
       router.push("/admin/products");
     } catch (error) {
       console.error("Error adding supplier:", error);

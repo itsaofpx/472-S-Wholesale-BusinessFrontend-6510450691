@@ -47,6 +47,21 @@ export default function AddProduct() {
     setLoading(true);
     setError(null);
 
+    if (!pName || !pDescription || !pLocation || !pAmount || !pPrice || !images[0] || !supplierId) {
+      if (!pPrice) {
+        alert("กรุณากรอก ราคา ให้สมเหตุสมผล")
+        setLoading(false);
+        return;
+      }
+      if (!pAmount) {
+        alert("กรุณากรอก จำนวน ให้สมเหตุสมผล")
+        setLoading(false);
+        return;
+      }
+      alert("กรุณากรอกข้อมูลทุกช่องให้ครบถ้วน");
+      setLoading(false);
+      return;
+    }
     const formData = {
       p_name: pName,
       p_description: pDescription,
@@ -75,9 +90,9 @@ export default function AddProduct() {
       console.log(formData);
       console.log("Data ที่ได้จากการเพิ่มสินค้า:", data);
       postSupplierOrderList(data.id);
-      router.push("/products");
+      alert("สินค้าเพิ่มสำเร็จแล้ว")
+      router.push("/admin/products");
     } catch (err) {
-      setError("เกิดข้อผิดพลาดในการเพิ่มสินค้า");
       console.error(err);
     } finally {
       setLoading(false);
@@ -244,7 +259,7 @@ export default function AddProduct() {
                 }`}
                 disabled={loading}
               >
-                {loading ? "กำลังเพิ่ม..." : "เพิ่มสินค้า"}
+                {loading ? "กำลังเพิ่ม..." : "เพิ่มสินค้าใหม่"}
               </button>
             </>
           )}
