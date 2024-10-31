@@ -578,7 +578,7 @@ export default function Register() {
                     onClick={handleRegister}
                     className="bg-silverSand text-white w-full p-3 rounded-full hover:bg-stone-700 hover:text-white"
                   >
-                    ลงทะเบียน
+                    สร้างบัญชี
                   </button>
                 </div>
               </div>

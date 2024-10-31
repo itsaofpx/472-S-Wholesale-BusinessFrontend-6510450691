@@ -91,7 +91,7 @@ export default function ProductDetail({ params }: { params: Params }) {
     localStorage.setItem("cart", JSON.stringify(cart));
 
     // Show notification
-    notify("Product added to cart!");
+    notify("สินค้าถูกเพิ่มลงในตะกร้าแล้ว");
   };
 
   return (

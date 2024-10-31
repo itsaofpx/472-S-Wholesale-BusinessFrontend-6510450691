@@ -12,6 +12,7 @@ interface tier {
 export default function Tier() {
   const [tiers, setTiers] = useState<tier[]>([]);
   const [newDiscountPercent, setNewDiscountPercent] = useState(0);
+  const [isAdding, setIsAdding] = useState(false);
 
   // Fetch tiers from the API
   const fetchTiers = useCallback(async () => {
@@ -32,22 +33,27 @@ export default function Tier() {
     fetchTiers();
   }, [fetchTiers]);
 
-
   const addTier = async () => {
     if (tiers.length > 0) {
       const newTier = tiers[tiers.length - 1].tier + 1;
       const discountPercent = Number(newDiscountPercent);
       try {
-        const response = await axios.post("http://localhost:8000/tierlist", {
-          "tier": newTier,
-          "discount_percent": discountPercent,
-        }, {
-          headers: {
-            "Content-Type": "application/json",
+        const response = await axios.post(
+          "http://localhost:8000/tierlist",
+          {
+            tier: newTier,
+            discount_percent: discountPercent,
           },
-        });
-  
-        if (response.status === 200) { // Updated condition to check response status
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          // Updated condition to check response status
+          alert("เพิ่มส่วนลดสำเร็จ");
           setNewDiscountPercent(0); // Clear input after adding
           fetchTiers(); // Fetch updated list of tiers
         } else {
@@ -58,7 +64,8 @@ export default function Tier() {
       }
     }
   };
-  
+
+  //   const
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -67,7 +74,7 @@ export default function Tier() {
       </header>
       <div className="max-w-3xl mx-auto p-6 mt-8 bg-white shadow-lg rounded-lg">
         <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          Discount Tiers
+          ระดับผู้ใช้
         </h1>
 
         {tiers ? (
@@ -81,7 +88,7 @@ export default function Tier() {
                   Tier: {tier.tier}
                 </p>
                 <p className="text-lg font-semibold text-blue-600">
-                  Discount: {tier.discount_percent}%
+                  ส่วนลด: {tier.discount_percent}%
                 </p>
               </div>
             ))}
@@ -92,21 +99,33 @@ export default function Tier() {
           </p>
         )}
 
-        <div className="flex gap-4 mb-4">
-          <input
-            type="number"
-            value={newDiscountPercent}
-            onChange={(e) => setNewDiscountPercent(e.target.value)}
-            placeholder="Enter discount %"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
+        {!isAdding ? (
           <button
-            onClick={addTier}
+            onClick={() => setIsAdding(true)}
             className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            Add New Tier
+            เพิ่มระดับส่วนลดผู้ใช้
           </button>
-        </div>
+        ) : (
+          <div className="flex gap-4 mb-4">
+            <input
+              type="number"
+              value={newDiscountPercent}
+              onChange={(e) => setNewDiscountPercent(e.target.value)}
+              placeholder="Enter discount %"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <button
+              onClick={() => {
+                addTier();
+                setIsAdding(false); // Close the form after adding
+              }}
+              className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              ยืนยัน
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
