@@ -312,7 +312,7 @@ export default function Invoice() {
             onClick={handlePayButton}
             className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition duration-200 w-full md:w-auto"
           >
-            Pay Now
+            ชำระเงิน
           </button>
         </footer>
         {isModalOpen && (
@@ -357,7 +357,7 @@ export default function Invoice() {
                 onClick={handleSubmit}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg w-full"
               >
-                Submit
+                ยืนยัน
               </button>
 
               {message && (
