@@ -62,6 +62,7 @@ export default function OrderDetail() {
   const [trackingNumber, setTrackingNumber] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isAdding, setIsAdding] = useState(false);
+  const [isImage, setIsImage] = useState(false);
 
   const handleToggleAddress = () => {
     setShowFullAddress((prev) => !prev);
@@ -92,7 +93,7 @@ export default function OrderDetail() {
           },
         }
       );
-      alert("อัพเดตสถานะเสร็จสิ้น")
+      alert("อัพเดตสถานะเสร็จสิ้น");
       setIsAdding(false);
       // Optionally, update the order state with the new tracking number
       setOrder((prev) =>
@@ -125,7 +126,6 @@ export default function OrderDetail() {
             },
           }
         );
-      
       } catch (err) {
         console.error("Error cancel order:", err);
       }
@@ -156,6 +156,55 @@ export default function OrderDetail() {
     fetchOrder();
   }, [id]);
 
+  const confirmOrder = async () => {
+    const updatedOrder = {
+      ...order,
+      o_status: "C",
+    };
+    setOrder(updatedOrder);
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/order/${id}`,
+        {
+          ...updatedOrder,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      alert("อัพเดตสถานะเสร็จสิ้น");
+      setIsImage(false);
+    } catch (err) {
+      console.error("Error confirm order:", err);
+    }
+  };
+  const notConfirmOrder = async () => {
+    const updatedOrder = {
+      ...order,
+      o_status: "P",
+    };
+    setOrder(updatedOrder);
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/order/${id}`,
+        {
+          ...updatedOrder,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      alert("อัพเดตสถานะเสร็จสิ้น");
+      setIsImage(false);
+    } catch (err) {
+      console.error("Error confirm order:", err);
+    }
+  };
+
   useEffect(() => {
     const fetchOrderLines = async () => {
       setLoading(true);
@@ -171,6 +220,10 @@ export default function OrderDetail() {
     };
     fetchOrderLines();
   }, [id]);
+
+  const handleImage = () => {
+    if (imageUrl) setIsImage(true);
+  };
 
   if (loading) {
     return (
@@ -267,6 +320,46 @@ export default function OrderDetail() {
                 </button>
               )}
 
+              {!isImage ? (
+                <button
+                  onClick={handleImage}
+                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                  ตรวจหลักฐานการเงิน
+                </button>
+              ) : (
+                <div>
+                  <div className="mt-4">
+                    {imageUrl ? (
+                      <>
+                        <h3 className="font-semibold">Uploaded Receipt:</h3>
+                        <img
+                          src={imageUrl}
+                          alt="Uploaded Receipt"
+                          className="mt-2 max-w-full"
+                        />
+                      </>
+                    ) : (
+                      <p className="text-gray-500">Waiting For Payment</p>
+                    )}
+                  </div>
+                  <div className="flex flex-row gap-x-3"><button
+                    onClick={confirmOrder}
+                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded w-full"
+                  >
+                    ยืนยัน
+                  </button>
+                  <button
+                    onClick={notConfirmOrder}
+                    className="mt-2 px-4 py-2 bg-red-500 text-white rounded w-full"
+                  >
+                    ไม่ยืนยัน
+                  </button>
+                  </div>
+                  
+                </div>
+              )}
+
               <button
                 onClick={handleCancelOrder}
                 className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
@@ -319,20 +412,6 @@ export default function OrderDetail() {
         ) : (
           <p className="text-gray-500">No order lines found.</p>
         )}
-        <div className="mt-4">
-          {imageUrl ? (
-            <>
-              <h3 className="font-semibold">Uploaded Receipt:</h3>
-              <img
-                src={imageUrl}
-                alt="Uploaded Receipt"
-                className="mt-2 max-w-full"
-              />
-            </>
-          ) : (
-            <p className="text-gray-500">Waiting For Payment</p>
-          )}
-        </div>
       </div>
     </div>
   );
