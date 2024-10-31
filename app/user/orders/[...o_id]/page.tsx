@@ -26,14 +26,12 @@ export default function OrderDetail({ params }: { params: Params }) {
   const router = useRouter();
 
   const statusMapping = {
-    P: "Pending",
-    PD: "Paid",
-    C: "Confirmed",
-    S: "Shipping",
-    X: "Canceled",
+    P: "รอชำระเงิน",
+    PD: "ชำระเงินเรียบร้อย",
+    C: "ยืนยัน",
+    S: "กำลังจัดส่ง",
+    X: "ยกเลิกคำสั่งซื้อ",
   };
-
-
 
   useEffect(() => {
     async function fetchData() {
@@ -68,6 +66,37 @@ export default function OrderDetail({ params }: { params: Params }) {
     router.push(`/user/invoice?o_id=${o_id}`);
   };
 
+  const submitCancelOrder = async () => {
+    const updatedOrder = {
+      o_status: "X", // Set the status to "X" for cancellation
+      id: Number(o_id), // Ensure o_id is an integer
+    };
+
+    try {
+      const updateStatusUrl = `http://localhost:8000/order/status/update`;
+      const updateStatusResponse = await axios.put(
+        updateStatusUrl,
+        updatedOrder,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (updateStatusResponse.status === 200) {
+        setOrderStatus("X"); // Update the order status locally to "Canceled"
+        alert("Order has been successfully canceled.");
+        router.push("/user/orders");
+      } else {
+        alert("Failed to cancel the order. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error canceling order:", error);
+      alert("Failed to cancel the order. Please try again.");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="fixed w-full z-10">
@@ -98,7 +127,9 @@ export default function OrderDetail({ params }: { params: Params }) {
                   Status :{" "}
                   {statusMapping[orderStatus as keyof typeof statusMapping]}
                 </p>
-                <p>Tracking Number : {trackingNumber || "No Tracking Number"}</p>
+                <p>
+                  Tracking Number : {trackingNumber || "No Tracking Number"}
+                </p>
               </div>
             </div>
 
@@ -133,23 +164,36 @@ export default function OrderDetail({ params }: { params: Params }) {
           {" "}
           {/* Apply fixed position and bottom-0 */}
           <div className="flex flex-row justify-end border p-5 rounded-xl">
+            {orderStatus !== "PD" && orderStatus !== "X" && (
+              <div>
+                <button
+                  onClick={submitCancelOrder}
+                  type="button"
+                  className="text-black bg-white focus:outline-none focus:ring-4 border border-black font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
+                >
+                  ยกเลิกคำสั่งซื้อ
+                </button>
+              </div>
+            )}
+
             <div>
-              <button
-                type="button"
-                className="text-black bg-white focus:outline-none focus:ring-4 border border-black font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
-              >
-                ยกเลิกคำสั่งซื้อ
-              </button>
+              {orderStatus !== "X" && (
+                <button
+                  onClick={handleCheckout}
+                  type="button"
+                  className={`text-white ${
+                    orderStatus === "PD"
+                      ? "bg-gray-500"
+                      : "bg-blue-700 hover:bg-blue-800"
+                  } focus:outline-none focus:ring-4 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2`}
+                  disabled={orderStatus === "PD"} // Disable button if status is PD
+                >
+                  {orderStatus === "PD" ? "ชำระเรียบร้อย" : "ชำระเงิน"}
+                </button>
+              )}
             </div>
-            <div>
-              <button
-                onClick={handleCheckout}
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                ชำระเงิน
-              </button>
-            </div>
+
+            
           </div>
         </div>
       </main>
