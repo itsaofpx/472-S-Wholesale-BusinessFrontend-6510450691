@@ -63,6 +63,7 @@ export default function OrderDetail() {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isAdding, setIsAdding] = useState(false);
   const [isImage, setIsImage] = useState(false);
+  const [transactionId, setTransactionId] = useState<number>(0);
 
   const handleToggleAddress = () => {
     setShowFullAddress((prev) => !prev);
@@ -146,6 +147,7 @@ export default function OrderDetail() {
           `http://localhost:8000/transaction/order/${response.data.id}`
         );
         console.log(imageResponse.data.t_image_url);
+        setTransactionId(imageResponse.data.id);
         setImageUrl(imageResponse.data.t_image_url);
 
         setLoading(false);
@@ -198,6 +200,7 @@ export default function OrderDetail() {
           },
         }
       );
+      deleteTransaction();
       alert("อัพเดตสถานะเสร็จสิ้น");
       setIsImage(false);
     } catch (err) {
@@ -220,6 +223,18 @@ export default function OrderDetail() {
     };
     fetchOrderLines();
   }, [id]);
+
+  const deleteTransaction = async () => {
+    var t_Id = Number(transactionId); // Replace with the actual transactionId;
+    try {
+      const response = await axios.delete(
+        `http://localhost:8000/transaction/${t_Id}`
+      );
+      setIsAdding(false);
+    } catch (err) {
+      console.error("Error deleting transaction:", err);
+    }
+  }
 
   const handleImage = () => {
     if (imageUrl) setIsImage(true);
