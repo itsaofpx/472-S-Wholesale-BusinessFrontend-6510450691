@@ -194,7 +194,7 @@ export default function Invoice() {
           console.log("Transaction Response:", transactionResponse.data);
 
           sessionStorage.removeItem("discount");
-          alert("ชำระเงินสำเร็จ")
+          alert("ชำระเงินสำเร็จ");
           router.push(`orders/${o_id}`);
 
           setIsModalOpen(false); // Close the modal after submission
@@ -327,29 +327,39 @@ export default function Invoice() {
                 &times;
               </button>
 
-              <div className="mb-4 text-start">
+              <div className="mb-4 flex flex-col items-center text-center">
                 <QRCode value="https://example.com" size={150} />
-                <p className="text-gray-500 text-sm mt-2">Scan this QR code</p>
+                <p className="text-gray-500 text-sm mt-2">
+                  แสกน QR Code นี้เพื่อทำการชำระ และ อัพโหลดหลักฐานการชำระเงิน
+                </p>
+                {/* Total Price */}
+                <p className="text-lg font-semibold text-gray-900 mt-4">
+                  Total Due: ${total.toFixed(2)}
+                </p>
               </div>
+
               <div className="mb-4">
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
                   className="block w-full text-sm text-gray-500
-                     file:mr-4 file:py-2 file:px-4
-                     file:rounded-full file:border-0
-                     file:text-sm file:font-semibold
-                     file:bg-blue-50 file:text-blue-700
-                     hover:file:bg-blue-100"
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-full file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-blue-50 file:text-blue-700
+                      hover:file:bg-blue-100"
+                  title="อัพโหลดหลักฐานการชำระเงิน"
                 />
               </div>
+
               <button
                 onClick={handleSubmit}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg w-full"
               >
                 Submit
               </button>
+
               {message && (
                 <p className="mt-4 text-center text-lg font-semibold">
                   {message}
