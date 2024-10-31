@@ -224,8 +224,8 @@ export default function Invoice() {
               INVOICE
             </h1>
             <div className="text-right">
-              <p className="text-gray-500">Business address</p>
-              <p className="text-gray-500">Bangkok, TH - 42190</p>
+              <p className="text-gray-500">50 Ngamwongwan Rd, Lat Yao,  Chatuchak</p>
+              <p className="text-gray-500">Bangkok, TH - 10900</p>
               <p className="text-gray-500">TAX ID 1102004040502</p>
             </div>
           </div>
@@ -233,12 +233,12 @@ export default function Invoice() {
           <div className="flex flex-col md:flex-row justify-between text-gray-700">
             {/* Billed To */}
             <div className="mb-4 md:mb-0">
-              <h2 className="font-semibold text-lg">Billed to</h2>
+              {/* <h2 className="font-semibold text-lg">Billed to</h2>
               <p className="text-gray-600">Company Name</p>
               <p className="text-gray-600">Company address</p>
               <p className="text-gray-600">City, Country - 00000</p>
               <h2 className="font-semibold text-lg">Tracking Number</h2>
-              <p className="text-gray-600">SPX: TH-42190</p>
+              <p className="text-gray-600">SPX: TH-42190</p> */}
             </div>
 
             {/* Invoice Details */}
@@ -253,7 +253,7 @@ export default function Invoice() {
               </div>
               <div>
                 <h3 className="font-semibold text-sm">Reference</h3>
-                <p className="text-gray-600">INV-057</p>
+                <p className="text-gray-600">Order # {o_id}</p>
               </div>
               <div>
                 <h3 className="font-semibold text-sm">Due date</h3>
