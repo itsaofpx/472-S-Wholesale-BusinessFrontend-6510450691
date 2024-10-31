@@ -61,6 +61,7 @@ export default function OrderDetail() {
   const [showFullAddress, setShowFullAddress] = useState(false);
   const [trackingNumber, setTrackingNumber] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [isAdding, setIsAdding] = useState(false);
 
   const handleToggleAddress = () => {
     setShowFullAddress((prev) => !prev);
@@ -91,7 +92,8 @@ export default function OrderDetail() {
           },
         }
       );
-      console.log("Tracking number updated:", response.data);
+      alert("อัพเดตสถานะเสร็จสิ้น")
+      setIsAdding(false);
       // Optionally, update the order state with the new tracking number
       setOrder((prev) =>
         prev ? { ...prev, tracking_number: trackingNumber } : prev
@@ -123,6 +125,7 @@ export default function OrderDetail() {
             },
           }
         );
+      
       } catch (err) {
         console.error("Error cancel order:", err);
       }
@@ -238,23 +241,31 @@ export default function OrderDetail() {
             </div>
             <div className="flex flex-col my-4">
               {/* Existing order details code */}
-
-              <div>
-                <strong>Tracking Number:</strong>
-                <input
-                  type="text"
-                  value={trackingNumber}
-                  onChange={handleTrackingNumberChange}
-                  placeholder={order.tracking_number}
-                  className="border rounded p-2 w-full"
-                />
+              {isAdding ? (
+                <div>
+                  <strong>Tracking Number:</strong>
+                  <input
+                    type="text"
+                    value={trackingNumber}
+                    onChange={handleTrackingNumberChange}
+                    placeholder={order.tracking_number}
+                    className="border rounded p-2 w-full"
+                  />
+                  <button
+                    onClick={handleTrackingNumberUpdate}
+                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded w-full"
+                  >
+                    ยืนยัน
+                  </button>
+                </div>
+              ) : (
                 <button
-                  onClick={handleTrackingNumberUpdate}
-                  className="mt-2 px-4 py-2 bg-blue-500 text-white rounded w-full"
+                  onClick={() => setIsAdding(true)}
+                  className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
-                  Update Tracking Number
+                  อัพเดตสถานะการจัดส่งสินค้า
                 </button>
-              </div>
+              )}
 
               <button
                 onClick={handleCancelOrder}
