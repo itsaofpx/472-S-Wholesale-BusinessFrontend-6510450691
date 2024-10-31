@@ -61,6 +61,8 @@ export default function OrderDetail() {
   const [showFullAddress, setShowFullAddress] = useState(false);
   const [trackingNumber, setTrackingNumber] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [isAdding, setIsAdding] = useState(false);
+  const [isImage, setIsImage] = useState(false);
 
   const handleToggleAddress = () => {
     setShowFullAddress((prev) => !prev);
@@ -91,7 +93,8 @@ export default function OrderDetail() {
           },
         }
       );
-      console.log("Tracking number updated:", response.data);
+      alert("อัพเดตสถานะเสร็จสิ้น");
+      setIsAdding(false);
       // Optionally, update the order state with the new tracking number
       setOrder((prev) =>
         prev ? { ...prev, tracking_number: trackingNumber } : prev
@@ -153,6 +156,55 @@ export default function OrderDetail() {
     fetchOrder();
   }, [id]);
 
+  const confirmOrder = async () => {
+    const updatedOrder = {
+      ...order,
+      o_status: "C",
+    };
+    setOrder(updatedOrder);
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/order/${id}`,
+        {
+          ...updatedOrder,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      alert("อัพเดตสถานะเสร็จสิ้น");
+      setIsImage(false);
+    } catch (err) {
+      console.error("Error confirm order:", err);
+    }
+  };
+  const notConfirmOrder = async () => {
+    const updatedOrder = {
+      ...order,
+      o_status: "P",
+    };
+    setOrder(updatedOrder);
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/order/${id}`,
+        {
+          ...updatedOrder,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      alert("อัพเดตสถานะเสร็จสิ้น");
+      setIsImage(false);
+    } catch (err) {
+      console.error("Error confirm order:", err);
+    }
+  };
+
   useEffect(() => {
     const fetchOrderLines = async () => {
       setLoading(true);
@@ -168,6 +220,10 @@ export default function OrderDetail() {
     };
     fetchOrderLines();
   }, [id]);
+
+  const handleImage = () => {
+    if (imageUrl) setIsImage(true);
+  };
 
   if (loading) {
     return (
@@ -238,23 +294,71 @@ export default function OrderDetail() {
             </div>
             <div className="flex flex-col my-4">
               {/* Existing order details code */}
-
-              <div>
-                <strong>Tracking Number:</strong>
-                <input
-                  type="text"
-                  value={trackingNumber}
-                  onChange={handleTrackingNumberChange}
-                  placeholder={order.tracking_number}
-                  className="border rounded p-2 w-full"
-                />
+              {isAdding ? (
+                <div>
+                  <strong>Tracking Number:</strong>
+                  <input
+                    type="text"
+                    value={trackingNumber}
+                    onChange={handleTrackingNumberChange}
+                    placeholder={order.tracking_number}
+                    className="border rounded p-2 w-full"
+                  />
+                  <button
+                    onClick={handleTrackingNumberUpdate}
+                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded w-full"
+                  >
+                    ยืนยัน
+                  </button>
+                </div>
+              ) : (
                 <button
-                  onClick={handleTrackingNumberUpdate}
-                  className="mt-2 px-4 py-2 bg-blue-500 text-white rounded w-full"
+                  onClick={() => setIsAdding(true)}
+                  className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
-                  Update Tracking Number
+                  อัพเดตสถานะการจัดส่งสินค้า
                 </button>
-              </div>
+              )}
+
+              {!isImage ? (
+                <button
+                  onClick={handleImage}
+                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                  ตรวจหลักฐานการเงิน
+                </button>
+              ) : (
+                <div>
+                  <div className="mt-4">
+                    {imageUrl ? (
+                      <>
+                        <h3 className="font-semibold">Uploaded Receipt:</h3>
+                        <img
+                          src={imageUrl}
+                          alt="Uploaded Receipt"
+                          className="mt-2 max-w-full"
+                        />
+                      </>
+                    ) : (
+                      <p className="text-gray-500">Waiting For Payment</p>
+                    )}
+                  </div>
+                  <div className="flex flex-row gap-x-3"><button
+                    onClick={confirmOrder}
+                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded w-full"
+                  >
+                    ยืนยัน
+                  </button>
+                  <button
+                    onClick={notConfirmOrder}
+                    className="mt-2 px-4 py-2 bg-red-500 text-white rounded w-full"
+                  >
+                    ไม่ยืนยัน
+                  </button>
+                  </div>
+                  
+                </div>
+              )}
 
               <button
                 onClick={handleCancelOrder}
@@ -308,20 +412,6 @@ export default function OrderDetail() {
         ) : (
           <p className="text-gray-500">No order lines found.</p>
         )}
-        <div className="mt-4">
-          {imageUrl ? (
-            <>
-              <h3 className="font-semibold">Uploaded Receipt:</h3>
-              <img
-                src={imageUrl}
-                alt="Uploaded Receipt"
-                className="mt-2 max-w-full"
-              />
-            </>
-          ) : (
-            <p className="text-gray-500">Waiting For Payment</p>
-          )}
-        </div>
       </div>
     </div>
   );
