@@ -122,8 +122,8 @@ export default function Invoice() {
       ? orderData.map((order) => ({
           service: order.product_name,
           qty: order.quantity,
-          rate: `$${order.product_price.toFixed(2)}`, // Format product price as string
-          lineTotal: `$${(order.product_price * order.quantity).toFixed(2)}`, // Calculate line total
+          rate: `${order.product_price.toFixed(2)} บาท`, // Format product price as string
+          lineTotal: `${(order.product_price * order.quantity).toFixed(2)} บาท`, // Calculate line total
         }))
       : null;
 
@@ -293,17 +293,17 @@ export default function Invoice() {
         <div className="mt-6 text-right text-gray-700">
           <div className="flex justify-between py-2">
             <div>Subtotal + Discount</div>
-            <div className="font-medium">${discountedSubtotal.toFixed(2)}</div>
+            <div className="font-medium">{discountedSubtotal.toFixed(2)} บาท</div>
           </div>
 
           <div className="flex justify-between py-2">
             <div>Tax (10%)</div>
-            <div className="font-medium">${taxAmount.toFixed(2)}</div>
+            <div className="font-medium">{taxAmount.toFixed(2)} บาท</div>
           </div>
 
           <div className="flex justify-between py-4 border-t border-gray-200 font-bold text-lg">
             <div>Total due</div>
-            <div className="text-gray-900">${total.toFixed(2)}</div>
+            <div className="text-gray-900">{total.toFixed(2)} บาท</div>
           </div>
         </div>
 
@@ -334,7 +334,7 @@ export default function Invoice() {
                 </p>
                 {/* Total Price */}
                 <p className="text-lg font-semibold text-gray-900 mt-4">
-                  Total Due: ${total.toFixed(2)}
+                  Total Due: {total.toFixed(2)} บาท
                 </p>
               </div>
 
