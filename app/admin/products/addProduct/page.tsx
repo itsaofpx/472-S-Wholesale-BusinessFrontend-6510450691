@@ -153,7 +153,8 @@ export default function AddProduct() {
               className="border border-gray-300 rounded w-full px-4 py-2"
             >
               <option value="">เลือกผู้จัดจำหน่าย</option>
-              {suppliers.map((supplier) => (
+              {Array.isArray(suppliers) && suppliers.length > 0 &&
+              suppliers.map((supplier) => (
                 <option key={supplier.id} value={supplier.id}>
                   {supplier.name}
                 </option>

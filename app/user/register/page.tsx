@@ -111,7 +111,7 @@ export default function Register() {
     lName: string,
     phoneNum: string,
     addressStr: string
-  ): Promise<boolean> {
+  ): Promise<string | null> {
     const url = "http://localhost:8000/register";
     try {
       const response = await axios.post(url, {
@@ -123,7 +123,7 @@ export default function Register() {
         password: password,
         address: addressStr,
       });
-      return true;
+      return response.data.id;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         // Handle Axios-specific error
@@ -132,13 +132,13 @@ export default function Register() {
         // Handle non-Axios errors
         alert("An unexpected error occurred");
       }
-      return false;
+      return null;
     }
   }
 
   const handleRegister = async () => {
     const address = `${addressStr} ${subDistrictStr} ${districtStr} ${provinceStr} ${zipCodeStr}`;
-    const isRegistered = await Register(
+    const userId = await Register(
       emailStr,
       passwordStr,
       IDStr,
@@ -147,15 +147,38 @@ export default function Register() {
       PhoneNumStr,
       address
     );
-
-    if (isRegistered) {
-      alert("สร้างบัญชีสำเร็จ")
+  
+    if (userId) {
+      alert("สร้างบัญชีสำเร็จ");
+      const isChatCreated = await CreateChat(userId);
+      if (isChatCreated) {
+        alert("Chat created successfully");
+      } else {
+        alert("Failed to create chat.");
+      }
+  
       router.push("/");
     } else {
-      // ? Notification Toast
       alert("Registration failed, not redirecting.");
     }
   };
+  async function CreateChat(userId: string): Promise<boolean> {
+    const url = "http://localhost:8000/chat";
+    console.log(userId);
+    console.log(typeof(userId));
+    try {
+      const response = await axios.post(url, { UserID: Number(userId)});
+      return true;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        alert(error.response.data?.message || "Failed to create chat");
+      } else {
+        alert("An unexpected error occurred");
+      }
+      return false;
+    }
+  }
+  
 
   const handleNext = (): void => {
     // Clear previous error messages
