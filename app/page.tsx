@@ -48,24 +48,23 @@ export default function Home() {
   const handleLogin = async () => {
     setEmailError("");
     setPasswordError("");
-
-    if (!email) setEmailError("กรุณากรอกอีเมลล์");
-    if (!password) setPasswordError("กรุณากรอกรหัสผ่านของคุณ");
-
-    if (email && password) {
-      const loginSuccess = await Login(email, password);
-      if (loginSuccess?.status == 200) {
-        console.log(loginSuccess.data.user.role);
-        if (loginSuccess.data.user.role == 1) {
-          router.push("/user/landing");
-        } else if (loginSuccess.data.user.role == 2) {
-          router.push("/admin/products");
-        }
-      } else {
-        setPasswordError("Login failed. Please check your credentials.");
-      }
+  
+    if (!email) return setEmailError("กรุณากรอกอีเมลล์");
+    if (!password) return setPasswordError("กรุณากรอกรหัสผ่านของคุณ");
+  
+    console.time("Login Request");
+    const loginSuccess = await Login(email, password);
+    console.timeEnd("Login Request");
+  
+    if (loginSuccess?.status === 200) {
+      console.time("Navigation");
+      router.push(loginSuccess.data.user.role === 1 ? "/user/landing" : "/admin/products");
+      console.timeEnd("Navigation");
+    } else {
+      setPasswordError("Login failed. Please check your credentials.");
     }
   };
+  
 
   return (
     <div className="h-screen flex justify-center items-center">
