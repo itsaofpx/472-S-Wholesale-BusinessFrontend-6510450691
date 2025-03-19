@@ -147,17 +147,13 @@ export default function Register() {
       PhoneNumStr,
       address
     );
-  
+
     if (userId) {
       alert("สร้างบัญชีสำเร็จ");
       const isChatCreated = await CreateChat(userId);
       if (isChatCreated) {
-        alert("Chat created successfully");
-      } else {
-        alert("Failed to create chat.");
+        router.push("/");
       }
-  
-      router.push("/");
     } else {
       alert("Registration failed, not redirecting.");
     }
@@ -165,9 +161,9 @@ export default function Register() {
   async function CreateChat(userId: string): Promise<boolean> {
     const url = "http://localhost:8000/chat";
     console.log(userId);
-    console.log(typeof(userId));
+    console.log(typeof userId);
     try {
-      const response = await axios.post(url, { UserID: Number(userId)});
+      const response = await axios.post(url, { UserID: Number(userId) });
       return true;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -178,7 +174,6 @@ export default function Register() {
       return false;
     }
   }
-  
 
   const handleNext = (): void => {
     // Clear previous error messages
@@ -272,7 +267,9 @@ export default function Register() {
   return (
     <div className="h-screen flex justify-center items-center ">
       <div className="text-center space-y-16 border p-20">
-        <div className="text-left"><BackButton /> </div>
+        <div className="text-left">
+          <BackButton />{" "}
+        </div>
         <div className="space-y-2">
           <p className="font-bold text-3xl">สร้างบัญชีผู้ใช้</p>
           <p className="font-bold text-xs">
