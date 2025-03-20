@@ -44,7 +44,6 @@ export default function Profile() {
     }
   }, []);
 
-
   const fetchUser = async (id: number) => {
     try {
       const response = await fetch(`http://localhost:8000/users/${id}`);
@@ -164,7 +163,13 @@ export default function Profile() {
       alert("New password and confirm password do not match!");
       return;
     }
-
+  
+    // ตรวจสอบความยาวรหัสผ่าน
+    if (newPassword.length < 8) {
+      alert("New password must be at least 8 characters long!");
+      return;
+    }
+  
     try {
       const response = await fetch("http://localhost:8000/password", {
         method: "PUT",
@@ -177,14 +182,14 @@ export default function Profile() {
           new_password: newPassword,
         }),
       });
-
+  
       console.log(user?.email, oldPassword, newPassword)
       if (response.ok) {
         alert("Password changed successfully!");
         setIsChangePasswordOpen(false); // Close the modal after successful change
         setConfirmPassword("");
-        setOldPassword("")
-        setNewPassword("")
+        setOldPassword("");
+        setNewPassword("");
       } else {
         const data = await response.json();
         alert(data.error || "Error changing password");
@@ -194,6 +199,7 @@ export default function Profile() {
       alert("Failed to change password.");
     }
   };
+  
 
   return (
     <div>
@@ -245,7 +251,7 @@ export default function Profile() {
                   value={isEditing ? editableUser?.f_name : user?.f_name}
                   onChange={handleChange}
                   disabled={!isEditing}
-                  className="px-1 py-2 bg-neutral-200 rounded-md w-full"
+                  className={`px-1 py-2 bg-neutral-200 rounded-md w-full ${isEditing ? 'border-2 border-blue-500' : ''}`}
                 />
               </div>
               <div className="flex flex-col w-full space-y-2">
@@ -256,7 +262,7 @@ export default function Profile() {
                   value={isEditing ? editableUser?.l_name : user?.l_name}
                   onChange={handleChange}
                   disabled={!isEditing}
-                  className="px-1 py-2 bg-neutral-200 rounded-md w-full"
+                  className={`px-1 py-2 bg-neutral-200 rounded-md w-full ${isEditing ? 'border-2 border-blue-500' : ''}`}
                 />
               </div>
               <div className="flex flex-col space-y-2">
@@ -269,7 +275,7 @@ export default function Profile() {
                   }
                   onChange={handleChange}
                   disabled={!isEditing}
-                  className="px-1 py-2 bg-neutral-200 rounded-md w-full"
+                  className={`px-1 py-2 bg-neutral-200 rounded-md w-full ${isEditing ? 'border-2 border-blue-500' : ''}`}
                 />
               </div>
               <div className="flex flex-col space-y-2">
@@ -279,7 +285,7 @@ export default function Profile() {
                   name="tier_rank"
                   value={user?.tier_rank}
                   disabled={!isEditing}
-                  className="px-1 py-2 bg-neutral-200 rounded-md w-full"
+                  className={`px-1 py-2 bg-neutral-200 rounded-md w-full ${isEditing ? 'border-2 border-blue-500' : ''}`}
                 />
               </div>
             </div>
@@ -292,7 +298,7 @@ export default function Profile() {
                   value={isEditing ? editableUser?.email : user?.email}
                   onChange={handleChange}
                   disabled={!isEditing}
-                  className="px-1 py-2 bg-neutral-200 rounded-md w-full"
+                  className={`px-1 py-2 bg-neutral-200 rounded-md w-full ${isEditing ? 'border-2 border-blue-500' : ''}`}
                 />
               </div>
               <div className="flex flex-col space-y-2">
@@ -302,7 +308,7 @@ export default function Profile() {
                   value={isEditing ? editableUser?.address : user?.address}
                   onChange={handleChange}
                   disabled={!isEditing}
-                  className="px-1 py-2 bg-neutral-200 rounded-md w-full"
+                  className={`px-1 py-2 bg-neutral-200 rounded-md w-full ${isEditing ? 'border-2 border-blue-500' : ''}`}
                 />
               </div>
             </div>

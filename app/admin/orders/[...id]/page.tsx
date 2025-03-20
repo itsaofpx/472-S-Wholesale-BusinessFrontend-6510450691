@@ -234,7 +234,7 @@ export default function OrderDetail() {
     } catch (err) {
       console.error("Error deleting transaction:", err);
     }
-  }
+  };
 
   const handleImage = () => {
     if (imageUrl) setIsImage(true);
@@ -345,33 +345,38 @@ export default function OrderDetail() {
               ) : (
                 <div>
                   <div className="mt-4">
-                    {imageUrl ? (
-                      <>
-                        <h3 className="font-semibold">Uploaded Receipt:</h3>
-                        <img
-                          src={imageUrl}
-                          alt="Uploaded Receipt"
-                          className="mt-2 max-w-full"
-                        />
-                      </>
+                    {imageUrl !== "Credit Card Receipt" ? (
+                      imageUrl === "" ? (
+                        <p className="text-gray-500">Waiting For Payment</p>
+                      ) : (
+                        <>
+                          <h3 className="font-semibold">Uploaded Receipt:</h3>
+                          <img
+                            src={imageUrl}
+                            alt="Uploaded Receipt"
+                            className="mt-2 max-w-full"
+                          />
+                        </>
+                      )
                     ) : (
-                      <p className="text-gray-500">Waiting For Payment</p>
+                      <p className="text-green-500 font-bold">Credit Card Payment</p>
                     )}
                   </div>
-                  <div className="flex flex-row gap-x-3"><button
-                    onClick={confirmOrder}
-                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded w-full"
-                  >
-                    ยืนยัน
-                  </button>
-                  <button
-                    onClick={notConfirmOrder}
-                    className="mt-2 px-4 py-2 bg-red-500 text-white rounded w-full"
-                  >
-                    ไม่ยืนยัน
-                  </button>
+
+                  <div className="flex flex-row gap-x-3">
+                    <button
+                      onClick={confirmOrder}
+                      className="mt-2 px-4 py-2 bg-blue-500 text-white rounded w-full"
+                    >
+                      ยืนยัน
+                    </button>
+                    <button
+                      onClick={notConfirmOrder}
+                      className="mt-2 px-4 py-2 bg-red-500 text-white rounded w-full"
+                    >
+                      ไม่ยืนยัน
+                    </button>
                   </div>
-                  
                 </div>
               )}
 
