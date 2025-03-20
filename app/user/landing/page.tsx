@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Loading from "../../components/Loading";
+import { LuMessageCircleQuestion } from "react-icons/lu";
+import ChatButton from "@/app/components/ChatButton";
 
 interface Product {
   id: string;
@@ -19,16 +21,18 @@ export default function Landing() {
   const [loading, setLoading] = useState(true);
   const [userID, setUserID] = useState();
   const [name, setName] = useState("");
-  const [minPrice, setMinPrice] = useState(0); // Default to 0
-  const [maxPrice, setMaxPrice] = useState(0); // Default to 0
+  const [minPrice, setMinPrice] = useState(1);
+  const [maxPrice, setMaxPrice] = useState(29999);
+  const [showChat, setShowChat] = useState(false);
 
-  // Fetch product data from the API
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get("http://localhost:8000/products");
         setProducts(response.data);
         setFilteredProducts(response.data);
+
         setLoading(false);
         console.log(response.data);
       } catch (error) {
@@ -78,16 +82,13 @@ export default function Landing() {
 
   return (
     <div>
-      {/* Navbar */}
       <div className="fixed w-full z-10">
         <Navbar />
       </div>
 
-      {/* Main Content */}
-      <div className="pt-20 lg:pt-24 flex flex-col lg:flex-row h-screen px-5 lg:px-10 py-5 space-y-5 lg:space-y-0 lg:space-x-10">
+      <div className="pt-20 lg:pt-24 flex flex-col lg:flex-row h-screen px-5 lg:px-10 py-5 space-y-5 lg:space-y-0 lg:space-x-10 relative">
         {/* Sidebar - Filters */}
         <div className="space-y-6 xs:w-full justify-center items-center">
-          {/* Search Section */}
           <div>
             <h2 className="font-semibold text-lg">Search</h2>
             <div className="mt-2">
@@ -105,27 +106,29 @@ export default function Landing() {
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
+
           </div>
-          {/* Price Range Section */}
           <div className="space-y-2">
             <h2 className="font-semibold text-lg">Price</h2>
             <div className="flex items-center space-x-2">
               <input
                 type="number"
-                className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 hover:border-slate-300 shadow-sm"
+                className="w-full bg-white text-sm border rounded-md px-3 py-2 focus:outline-none"
                 placeholder="฿ 0.00"
                 value={minPrice}
                 onChange={(e) => {
                   const value = parseFloat(e.target.value) || 0;
                   setMinPrice(value);
                 }}
+
               />
               <div className="h-1 w-full bg-black" />
               <input
                 type="number"
-                className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 hover:border-slate-300 shadow-sm"
+                className="w-full bg-white text-sm border rounded-md px-3 py-2 focus:outline-none"
                 placeholder="฿ 0.00"
                 value={maxPrice}
+
                 onChange={(e) => {
                   const value = parseFloat(e.target.value) || 0;
                   setMaxPrice(value);
@@ -141,6 +144,7 @@ export default function Landing() {
               ค้นหาสินค้า
             </button>
           </div>
+
         </div>
 
         {/* Product Grid */}
@@ -170,10 +174,13 @@ export default function Landing() {
                     </div>
                   </Link>
                 )
+
               )
             )}
           </div>
         </div>
+
+        <ChatButton />
       </div>
     </div>
   );

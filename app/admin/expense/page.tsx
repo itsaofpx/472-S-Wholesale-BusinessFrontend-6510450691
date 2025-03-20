@@ -44,7 +44,8 @@ export default function Expense() {
         <div className="min-h-screen bg-gray-100 p-6">
             <header><AdminNavbar /></header>
             <ul className="space-y-4">
-                {supplierOrderLists.map((item) => (
+                {Array.isArray(supplierOrderLists) && supplierOrderLists.length > 0 &&
+                supplierOrderLists.map((item) => (
                     <li
                         key={item.id}
                         className="bg-white shadow-md rounded-lg p-4 hover:bg-gray-50 transition-colors"
