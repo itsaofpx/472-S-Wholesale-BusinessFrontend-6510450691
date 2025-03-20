@@ -6,6 +6,8 @@ import { useSearchParams } from "next/navigation";
 import { QRCode } from "react-qrcode-logo";
 import { useRouter } from "next/navigation";
 import BackButton from "@/app/components/BackButton";
+import CardModal from "../../components/CardModal";  // Adjust the import path
+
 
 const InvoiceRecord = ({
   service,
@@ -63,6 +65,8 @@ export default function Invoice() {
   const [productData, setProductData] = useState<productDataInterface[]>([]);
   const [receiptUrl, setReceiptUrl] = useState("");
   const router = useRouter();
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isCardOpen, setIsCardOpen] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -143,7 +147,7 @@ export default function Invoice() {
   const total = discountedSubtotal + taxAmount;
 
   const handlePayButton = () => {
-    setIsModalOpen(true);
+    setIsPaymentModalOpen(true);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -210,6 +214,7 @@ export default function Invoice() {
     }
   };
 
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <header className="fixed w-full z-10">
@@ -224,7 +229,9 @@ export default function Invoice() {
               INVOICE
             </h1>
             <div className="text-right">
-              <p className="text-gray-500">50 Ngamwongwan Rd, Lat Yao,  Chatuchak</p>
+              <p className="text-gray-500">
+                50 Ngamwongwan Rd, Lat Yao, Chatuchak
+              </p>
               <p className="text-gray-500">Bangkok, TH - 10900</p>
               <p className="text-gray-500">TAX ID 1102004040502</p>
             </div>
@@ -293,7 +300,9 @@ export default function Invoice() {
         <div className="mt-6 text-right text-gray-700">
           <div className="flex justify-between py-2">
             <div>Subtotal + Discount</div>
-            <div className="font-medium">{discountedSubtotal.toFixed(2)} บาท</div>
+            <div className="font-medium">
+              {discountedSubtotal.toFixed(2)} บาท
+            </div>
           </div>
 
           <div className="flex justify-between py-2">
@@ -368,6 +377,83 @@ export default function Invoice() {
             </div>
           </div>
         )}
+
+        {isPaymentModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="relative bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
+              {/* Close Button */}
+              <button
+                onClick={() => setIsPaymentModalOpen(false)}
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-bold"
+                aria-label="Close"
+              >
+                &times;
+              </button>
+              <div
+                onClick={() => {
+                  setIsPaymentModalOpen(false);
+                  setIsModalOpen(true);
+                  setMessage("");
+                }}                
+                className="h-[100px] w-full bg-white-500 border-2 border-gray-300 mb-4 mt-4 rounded-lg justify-between flex items-center p-4 hover:border-blue-500"
+              >
+                <div className="flex">
+                  <img
+                    src="https://miro.medium.com/v2/resize:fit:711/1*nueyBV0RNEpETYMKpsYWhA.png"
+                    alt=""
+                    className="w-[100px] h-[50px] object-cover"
+                  />
+                </div>
+                <p>QR Code</p>
+              </div>
+
+              <div
+                onClick={() => {
+                  setIsPaymentModalOpen(false);
+                  setIsCardOpen(true);
+                }}
+                className="h-[100px] w-full bg-white-500 border-2 border-gray-300 mb-4 mt-4 rounded-lg justify-between flex items-center p-4 hover:border-blue-500"
+              >
+                <div className="flex">
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3V1gApW44x8AYf4lZB7KVxWjMupExtAX2OA&s"
+                    alt=""
+                    className="w-[50px] h-[50px] object-cover"
+                  />
+                  <img
+                    src="https://www.mastercard.com/content/dam/public/mastercardcom/th/th/logos/mastercard-og-image.png"
+                    alt=""
+                    className="w-[50px] h-[50px] object-cover"
+                  />
+                  <img
+                    src="https://e7.pngegg.com/pngimages/669/34/png-clipart-american-express-logo-american-express-payment-credit-card-membership-rewards-money-credit-card-blue-text-thumbnail.png"
+                    alt=""
+                    className="w-[50px] h-[50px] object-cover"
+                  />
+                </div>
+                <p>Credit Card</p>
+              </div>
+
+              {/* <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg w-full">
+                ยืนยัน
+              </button> */}
+
+          
+            </div>
+          </div>
+        )}
+
+        {/* CardModal component */}
+      <CardModal
+        isCardOpen={isCardOpen}
+        setIsCardOpen={setIsCardOpen}
+        o_id={o_id}
+        total={total}
+        productData={productData}
+      />
+
+    
+
       </div>
     </div>
   );

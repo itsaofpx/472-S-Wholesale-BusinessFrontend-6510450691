@@ -44,6 +44,7 @@ export default function Profile() {
     }
   }, []);
 
+
   const fetchUser = async (id: number) => {
     try {
       const response = await fetch(`http://localhost:8000/users/${id}`);

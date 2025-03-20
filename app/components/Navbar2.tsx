@@ -1,15 +1,8 @@
-import {
-  FaShoppingCart,
-  FaBell,
-  FaUserCircle,
-  FaRegFileAlt,
-} from "react-icons/fa";
+import { FaShoppingCart, FaRegFileAlt, FaUserCircle } from "react-icons/fa";
 import Link from "next/link";
-import { HiMiniCreditCard } from "react-icons/hi2";
 import { PiShoppingBagOpenFill } from "react-icons/pi";
 
-
-export default function Navbar() {
+export default function Navbar2() {
   return (
     <nav className="bg-black text-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -25,34 +18,33 @@ export default function Navbar() {
             Wholesale
           </a>
         </div>
-        {/* Right side: Icons */}
-        <div className="flex space-x-6">
-          {/* Shopping Cart */}
-          <button className="hover:text-gray-300">
-            <Link href="/user/mycreditcard">
-              <HiMiniCreditCard size={30} />          
-            </Link>
-          </button>
 
+        {/* Right side: Icons */}
+        <div className="flex space-x-6 items-center">
           {/* Shopping Cart */}
           <button className="hover:text-gray-300">
-            <Link href="/user/cart">
+            <Link href="/">
               <FaShoppingCart size={24} />
             </Link>
           </button>
 
           {/* Notifications */}
           <button className="hover:text-gray-300">
-            <Link href="/user/orders">
+            <Link href="/">
               <FaRegFileAlt size={24} />
             </Link>
           </button>
 
           {/* Profile */}
           <button className="hover:text-gray-300">
-            <Link href="/user/profile">
+            <Link href="/">
               <FaUserCircle size={24} />
             </Link>
+          </button>
+
+          {/* Login Button */}
+          <button className="px-10 py-2 bg-white font-bold text-black rounded-md hover:bg-black hover:text-white transition duration-300">
+            <Link href="/">Login</Link>
           </button>
         </div>
       </div>
