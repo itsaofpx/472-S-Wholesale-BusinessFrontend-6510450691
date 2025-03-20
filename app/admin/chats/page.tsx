@@ -1,179 +1,294 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import AdminNavbar from "@/app/components/AdminNavbar";
-import { ChevronRight } from "lucide-react";
+"use client"
+import React, { useEffect, useState, useRef } from "react"
+import AdminNavbar from "@/app/components/AdminNavbar"
+import {
+  Layout,
+  Input,
+  List,
+  Avatar,
+  Badge,
+  Card,
+  Button,
+  Empty,
+  Typography,
+} from "antd"
+import {
+  SendOutlined,
+  UserOutlined,
+  SearchOutlined,
+} from "@ant-design/icons"
+import { format } from "date-fns"
 
-const ChatPreview = ({ userId, chatId, onClick, isSelected }) => (
-  <div
-    className={`flex items-center justify-between p-4 border-b cursor-pointer transition-all ${
-      isSelected ? "bg-blue-100" : "hover:bg-gray-100"
-    }`}
-    onClick={onClick}
-  >
-    <div className="flex flex-col flex-grow">
-      <span className="font-medium text-gray-900">Chat ID: {chatId}</span>
-      <span className="text-sm text-gray-500 truncate">User ID: {userId}</span>
+const { Header, Sider, Content } = Layout
+const { Search } = Input
+const { Text, Title } = Typography
+
+const ChatList = ({ chats, selectedChat, onSelectChat, loading, searchTerm, onSearch }) => (
+  <div className="h-full flex flex-col">
+    <div className="p-4">
+      <Search
+        placeholder="Search chats..."
+        allowClear
+        value={searchTerm}
+        onChange={(e) => onSearch(e.target.value)}
+        prefix={<SearchOutlined className="text-gray-400" />}
+        className="mb-2"
+      />
     </div>
-    <ChevronRight className="w-5 h-5 text-gray-400" />
+    <List
+      className="overflow-y-auto flex-1"
+      loading={loading}
+      dataSource={chats}
+      renderItem={(chat) => (
+        <List.Item
+          key={chat.ID}
+          onClick={() => onSelectChat(chat)}
+          className={`cursor-pointer hover:bg-gray-50 ${
+            selectedChat?.ID === chat.ID ? "bg-blue-50" : ""
+          }`}
+          style={{ padding: "12px 16px" }}
+        >
+          <List.Item.Meta
+            avatar={
+              <Badge dot={chat.hasNewMessages}>
+                <Avatar icon={<UserOutlined />} style={{ backgroundColor: "#1890ff" }} />
+              </Badge>
+            }
+            title={<Text strong>User #{chat.UserID}</Text>}
+            description={
+              chat.Messages.length > 0 && (
+                <Text type="secondary" className="text-sm">
+                  {`${chat.Messages[chat.Messages.length - 1].Body.substring(0, 30)}...`}
+                </Text>
+              )
+            }
+          />
+          {chat.Messages.length > 0 && (
+            <Text type="secondary" className="text-xs">
+              {format(new Date(chat.Messages[chat.Messages.length - 1].CreatedAt), "HH:mm")}
+            </Text>
+          )}
+        </List.Item>
+      )}
+      locale={{
+        emptyText: <Empty description="No chats found" />
+      }}
+    />
   </div>
-);
+)
+
+const ChatMessages = ({ messages, currentUserId }) => {
+  const messagesEndRef = useRef(null)
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  return (
+    <List
+      className="p-4"
+      itemLayout="horizontal"
+      dataSource={messages}
+      renderItem={(msg) => {
+        const isAdmin = msg.UserID === currentUserId
+        return (
+          <List.Item className={`flex ${isAdmin ? "justify-end" : "justify-start"} border-0`}>
+            <div className={`flex ${isAdmin ? "flex-row-reverse" : "flex-row"} items-start gap-3 w-full`}>
+              <Avatar
+                icon={<UserOutlined />}
+                style={{ backgroundColor: isAdmin ? "#1890ff" : "#f0f0f0" }}
+              />
+              <div className={`flex flex-col ${isAdmin ? "items-end" : "items-start"}`}>
+                <Card
+                  style={{
+                    backgroundColor: isAdmin ? "#1890ff" : "#fff",
+                    borderRadius: "8px",
+                  }}
+                  bodyStyle={{ padding: "8px 12px" }}
+                  bordered={!isAdmin}
+                >
+                  <Text
+                    strong
+                    className="block mb-1"
+                    style={{ color: isAdmin ? "#fff" : "inherit" }}
+                  >
+                    {msg.User.f_name} {msg.User.l_name}
+                  </Text>
+                  <Text style={{ color: isAdmin ? "#fff" : "inherit", whiteSpace: "pre-wrap" }}>
+                    {msg.Body}
+                  </Text>
+                </Card>
+                <Text type="secondary" className="text-xs">
+                  {format(new Date(msg.CreatedAt), "HH:mm")}
+                </Text>
+              </div>
+            </div>
+          </List.Item>
+        )
+      }}
+      locale={{
+        emptyText: <Empty description="No messages yet" />
+      }}
+    />
+  )
+}
 
 const Chats = () => {
-  const [chats, setChats] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedChat, setSelectedChat] = useState(null);
-  const [newMessage, setNewMessage] = useState("");
-  const [userID, setUserID] = useState("");
+  const [chats, setChats] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [selectedChat, setSelectedChat] = useState(null)
+  const [newMessage, setNewMessage] = useState("")
+  const [userID, setUserID] = useState("")
+  const [lastCheckedMessages, setLastCheckedMessages] = useState({})
+  const [searchTerm, setSearchTerm] = useState("")
+  const [sending, setSending] = useState(false)
 
   useEffect(() => {
-    const userString = sessionStorage.getItem("user");
+    const userString = sessionStorage.getItem("user")
     if (userString) {
-      const user = JSON.parse(userString);
-      setUserID(user.id || "Admin");
+      const user = JSON.parse(userString)
+      setUserID(user.id || "Admin")
     }
-  }, []);
+  }, [])
+
+  const fetchChats = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/chat")
+      if (!response.ok) throw new Error("Failed to fetch chats")
+
+      const data = await response.json()
+      const processedChats = data.map((chat) => {
+        const lastMessage = chat.Messages[chat.Messages.length - 1]
+        const lastChecked = lastCheckedMessages[chat.ID] || 0
+        return {
+          ...chat,
+          hasNewMessages: lastMessage && lastMessage.ID > lastChecked && lastMessage.UserID !== userID
+        }
+      })
+
+      setChats(processedChats)
+    } catch (error) {
+      console.error("Error fetching chats:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchChats = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch("http://localhost:8000/chat");
-        if (!response.ok) throw new Error("Failed to fetch chats");
-
-        const data = await response.json();
-        setChats(data);
-      } catch (error) {
-        console.error("Error fetching chats:", error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchChats();
-  }, []);
+    fetchChats()
+    const interval = setInterval(fetchChats, 10000)
+    return () => clearInterval(interval)
+  }, [userID, lastCheckedMessages])
 
   const handleChatSelect = (chat) => {
-    setSelectedChat(chat);
-  };
+    setSelectedChat(chat)
+    const lastMessage = chat.Messages[chat.Messages.length - 1]
+    if (lastMessage) {
+      setLastCheckedMessages((prev) => ({
+        ...prev,
+        [chat.ID]: lastMessage.ID,
+      }))
+    }
+  }
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedChat) return;
+    if (!newMessage.trim() || !selectedChat || sending) return
 
+    setSending(true)
     try {
       const response = await fetch(`http://localhost:8000/message/chat/${selectedChat.ID}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ body: newMessage, UserID: userID }),
-      });
+      })
 
-      if (!response.ok) throw new Error("Failed to send message");
+      if (!response.ok) throw new Error("Failed to send message")
 
-      const data = await response.json();
-      setSelectedChat((prevChat) => ({
-        ...prevChat,
-        Messages: [...prevChat.Messages, data],
-      }));
-      setNewMessage("");
+      const data = await response.json()
+      setSelectedChat((prev) => ({
+        ...prev,
+        Messages: [...prev.Messages, data],
+      }))
+      setNewMessage("")
+      await fetchChats()
     } catch (error) {
-      console.error("Error sending message:", error);
-      setError(error.message);
+      console.error("Error sending message:", error)
+    } finally {
+      setSending(false)
     }
-  };
+  }
+
+  const filteredChats = chats.filter(
+    (chat) =>
+      chat.UserID.toString().includes(searchTerm) ||
+      chat.Messages.some((msg) => msg.Body.toLowerCase().includes(searchTerm.toLowerCase()))
+  )
 
   return (
-    <div className="h-screen flex flex-col">
+    <Layout className="h-screen">
       <AdminNavbar />
-      <div className="flex flex-1">
-        {/* Chat List Sidebar */}
-        <div className="w-80 border-r bg-white overflow-y-auto">
-          <div className="p-4 border-b">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Chats</h2>
-          </div>
-          <div className="divide-y">
-            {loading ? (
-              <div className="p-4 text-center text-gray-500">Loading chats...</div>
-            ) : error ? (
-              <div className="p-4 text-center text-red-500">{error}</div>
-            ) : chats.length === 0 ? (
-              <div className="p-4 text-center text-gray-500">No chats found</div>
-            ) : (
-              chats.map((chat) => (
-                <ChatPreview
-                  key={chat.ID}
-                  userId={chat.UserID}
-                  chatId={chat.ID}
-                  onClick={() => handleChatSelect(chat)}
-                  isSelected={selectedChat && selectedChat.ID === chat.ID}
-                />
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* Chat Area */}
-        <div className="flex-1 flex flex-col bg-gray-50">
-          {/* Chat Header */}
-          <div className="p-4 border-b bg-white sticky top-0">
-            <h2 className="text-lg font-semibold text-gray-900">
-              {selectedChat ? `Chat with User #${selectedChat.UserID}` : "Select a chat"}
-            </h2>
-          </div>
-
-          {/* Chat Messages */}
-          <div className="flex-1 p-4 overflow-y-auto">
+      <Layout>
+        <Sider width={320} theme="light" className="border-r">
+          <ChatList
+            chats={filteredChats}
+            selectedChat={selectedChat}
+            onSelectChat={handleChatSelect}
+            loading={loading}
+            searchTerm={searchTerm}
+            onSearch={setSearchTerm}
+          />
+        </Sider>
+        <Layout>
+          <Content className="bg-gray-50">
             {selectedChat ? (
-              selectedChat.Messages.length > 0 ? (
-                selectedChat.Messages.map((message) => (
-                  <div
-                    key={message.ID}
-                    className={`flex ${
-                      message.UserID === userID ? "justify-end" : "justify-start"
-                    } mb-3`}
-                  >
-                    <div
-                      className={`p-3 rounded-lg max-w-xs text-sm shadow ${
-                        message.UserID === userID
-                          ? "bg-blue-500 text-white"
-                          : "bg-white border text-gray-900"
-                      }`}
-                    >
-                      <p className="font-medium">{message.User.f_name} {message.User.l_name}</p>
-                      <p>{message.Body}</p>
+              <Layout className="h-full">
+                <Header className="bg-white px-6 flex items-center h-16 border-b">
+                  <div className="flex items-center gap-3">
+                    <Avatar size="large" icon={<UserOutlined />} />
+                    <div className="flex flex-col">
+                      <Title level={4} style={{ margin: 0 }}>
+                        User #{selectedChat.UserID}
+                      </Title>
+                      <Text type="secondary">{selectedChat.Messages.length} messages</Text>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="text-gray-500 text-center mt-8">No messages yet</div>
-              )
+                </Header>
+                <Content className="overflow-y-auto">
+                  <ChatMessages messages={selectedChat.Messages} currentUserId={userID} />
+                </Content>
+                <div className="p-4 border-t bg-white">
+                  <Input.Group compact className="flex">
+                    <Input
+                      style={{ width: "calc(100% - 120px)" }}
+                      placeholder="Type your message..."
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      onPressEnter={handleSendMessage}
+                      disabled={sending}
+                    />
+                    <Button
+                      type="primary"
+                      icon={<SendOutlined />}
+                      onClick={handleSendMessage}
+                      loading={sending}
+                      disabled={!newMessage.trim()}
+                      style={{ width: "120px" }}
+                    >
+                      Send
+                    </Button>
+                  </Input.Group>
+                </div>
+              </Layout>
             ) : (
-              <div className="text-gray-500 text-center mt-8">Select a chat to view the conversation</div>
+              <div className="h-full flex items-center justify-center">
+                <Empty description="Select a chat to start messaging" />
+              </div>
             )}
-          </div>
+          </Content>
+        </Layout>
+      </Layout>
+    </Layout>
+  )
+}
 
-          {/* Chat Input */}
-          {selectedChat && (
-            <div className="p-4 border-t bg-white sticky bottom-0 flex space-x-2">
-              <input
-                type="text"
-                className="flex-1 p-2 border rounded-lg focus:ring focus:ring-blue-200"
-                placeholder="Type a message..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-              />
-              <button
-                className="p-2 bg-blue-500 text-white rounded-lg transition hover:bg-blue-600"
-                onClick={handleSendMessage}
-              >
-                Send
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default Chats;
+export default Chats

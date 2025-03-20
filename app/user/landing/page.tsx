@@ -150,12 +150,12 @@ export default function Landing() {
         {/* Product Grid */}
         <div className="flex-1 overflow-auto ">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.length === 0 ? (
+            {Array.isArray(filteredProducts) && filteredProducts.length === 0 ? (
               <div className="bg-red-white mt-[300px] col-span-full text-center text-gray-500">
                 ไม่มีสินค้าที่ตรงกับการค้นหา
               </div>
             ) : (
-              filteredProducts.map(
+              Array.isArray(filteredProducts) && filteredProducts.map(
                 (product: {
                   id: string;
                   image_url_1: string;
