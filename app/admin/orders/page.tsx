@@ -43,7 +43,7 @@ export default function Orders() {
 
   // Filter orders based on selected status
   const filteredOrders = selectedStatus
-    ? orders.filter((order) => order.o_status === selectedStatus)
+    ? Array.isArray(orders) && orders.length > 0 && orders.filter((order) => order.o_status === selectedStatus)
     : orders;
 
   return (
@@ -77,7 +77,7 @@ export default function Orders() {
           </select>
         </div>
 
-        {filteredOrders.length > 0 ? (
+        {Array.isArray(filteredOrders) && filteredOrders.length > 0 ? (
           <ul className="space-y-4">
             {filteredOrders.map((order) => (
               <li
