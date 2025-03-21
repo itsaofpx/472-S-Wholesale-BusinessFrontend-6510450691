@@ -1,0 +1,22 @@
+[
+  {
+    "p_id": 1,
+    "p_name": "GO Product 1",
+    "p_location": "Warehouse A",
+    "p_amount": 50,
+    "p_price": 999.99,
+    "image_url_1": "https://down-th.img.susercontent.com/file/th-11134207-7qul5-lhh53ds822eb48.webp",
+    "image_url_2": "https://down-th.img.susercontent.com/file/th-11134207-7quky-lhh53ds84vj75f@resize_w900_nl.webp",
+    "image_url_3": "https://down-th.img.susercontent.com/file/th-11134207-7qul9-lhh53ds87oo358@resize_w450_nl.webp"
+  },
+  {
+    "p_id": 2,
+    "p_name": "GO Product 2",
+    "p_location": "Warehouse B",
+    "p_amount": 50,
+    "p_price": 899.99,
+    "image_url_1": "https://down-th.img.susercontent.com/file/th-11134207-7qul2-lhh53ds86a3ne9@resize_w900_nl.webp",
+    "image_url_2": "https://down-th.img.susercontent.com/file/th-11134207-7qul2-lhh53ds86a3ne9@resize_w900_nl.webp",
+    "image_url_3": "https://down-th.img.susercontent.com/file/th-11134207-7qul2-lhh53ds86a3ne9@resize_w900_nl.webp"
+  }
+]
