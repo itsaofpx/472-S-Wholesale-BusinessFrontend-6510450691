@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import Navbar from "@/app/components/Navbar";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
@@ -7,7 +7,6 @@ import { QRCode } from "react-qrcode-logo";
 import { useRouter } from "next/navigation";
 import BackButton from "@/app/components/BackButton";
 import CardModal from "../../components/CardModal";  // Adjust the import path
-
 
 const InvoiceRecord = ({
   service,
@@ -50,7 +49,7 @@ interface productDataInterface {
   quantity: number;
 }
 
-export default function Invoice() {
+function InvoiceContent() {
   const searchParams = useSearchParams();
   const o_id = searchParams.get("o_id");
   const [orderData, setOrderData] = useState<orderDataInterface[]>([]);
@@ -213,7 +212,6 @@ export default function Invoice() {
       setMessage("Please upload a receipt first.");
     }
   };
-
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -456,5 +454,13 @@ export default function Invoice() {
 
       </div>
     </div>
+  );
+}
+
+export default function Invoice() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <InvoiceContent />
+    </Suspense>
   );
 }
