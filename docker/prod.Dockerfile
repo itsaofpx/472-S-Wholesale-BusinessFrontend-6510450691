@@ -1,4 +1,3 @@
-# Stage 1: Building the application
 FROM node:20-alpine AS builder
 
 WORKDIR /app
@@ -12,8 +11,11 @@ RUN npm ci
 # Copy the rest of the application
 COPY . .
 
-# ข้าม ESLint และ TypeScript Errors
-RUN echo "module.exports = { eslint: { ignoreDuringBuilds: true }, typescript: { ignoreBuildErrors: true }, experimental: { skipTrailingSlashRedirect: true } };" > next.config.js
+# Configure Next.js to ignore build errors
+RUN echo "module.exports = { eslint: { ignoreDuringBuilds: true }, typescript: { ignoreBuildErrors: true } };" > next.config.js
+
+# Set environment variable to disable static generation
+ENV NEXT_DISABLE_PRERENDER=true
 
 # Build the application
 RUN npm run build
@@ -28,6 +30,7 @@ WORKDIR /app
 
 # Set to production environment
 ENV NODE_ENV=production
+ENV NEXT_DISABLE_PRERENDER=true
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
@@ -38,6 +41,7 @@ RUN npm ci --production
 # Copy built application from the builder stage
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/next.config.js ./next.config.js
+COPY --from=builder /app/public ./public
 
 # Add user to run the application without root privileges
 RUN addgroup --system --gid 1001 nodejs
