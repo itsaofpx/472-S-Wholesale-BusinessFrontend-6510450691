@@ -13,7 +13,7 @@ RUN npm ci
 COPY . .
 
 # ข้าม ESLint และ TypeScript Errors
-RUN echo "module.exports = { eslint: { ignoreDuringBuilds: true }, typescript: { ignoreBuildErrors: true } };" > next.config.js
+RUN echo "module.exports = { eslint: { ignoreDuringBuilds: true }, typescript: { ignoreBuildErrors: true }, experimental: { skipTrailingSlashRedirect: true } };" > next.config.js
 
 # Build the application
 RUN npm run build
