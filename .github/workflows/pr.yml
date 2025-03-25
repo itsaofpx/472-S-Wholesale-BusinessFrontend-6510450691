@@ -113,3 +113,4 @@ jobs:
           docker buildx build --push \
             --tag ${{ secrets.DOCKER_USERNAME }}/agilefrontend-app:latest \
             --file ./docker/prod.Dockerfile .
+            
